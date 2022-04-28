@@ -1,7 +1,7 @@
 # Проект «Киноман»
 
 * Студент: [Павел Клёсов](https://up.htmlacademy.ru/ecmascript/17/user/339239).
-* Наставник: `Неизвестно`.
+* Наставник: [Иван Чернобук](https://htmlacademy.ru/profile/id237614).
 
 ---
 
