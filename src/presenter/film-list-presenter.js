@@ -21,7 +21,7 @@ export default class FilmListPresenter {
     render(this.filmListComponent, pageMainElement);
     render(this.filmContainer, this.filmListComponent.getElement().querySelector('.films-list'));
     for (let i = 0; i < this.films.length; i++) {
-      this.filteredComments.push(this.comments.filter((comment) => this.films[0].info.comments.includes(comment.id)));
+      this.filteredComments.push(this.comments.filter((comment) => this.films[0].info.commentIDs.includes(comment.id)));
       render(new FilmCardView(this.films[i]), this.filmContainer.getElement());
     }
     render(new ShowMoreButtonView(), this.filmListComponent.getElement().querySelector('.films-list'));

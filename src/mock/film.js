@@ -2,10 +2,10 @@ import {getRandomInteger, getRandomFloatingPoint, getRandomArrayElement, getRand
 import {AGE_RATINGS, FILM_NAMES, POSTERS, SAMPLE_SENTENCES, GENRES, DIRECTORS, WRITERS, ACTORS, COUNTRIES} from '../constants.js';
 import dayjs from 'dayjs';
 
-export const generateFilm = (_, filmId) => ({
+export const generateFilm = (_, filmID) => ({
   info: {
-    id: filmId,
-    comments: Array.from(new Set(Array.from({length: getRandomInteger(0, 200)}, () => getRandomInteger(0, 400)))),
+    id: filmID,
+    commentIDs: Array.from(new Set(Array.from({length: getRandomInteger(0, 200)}, () => getRandomInteger(0, 400)))),
     title: getRandomArrayElement(FILM_NAMES),
     alternativeTitle: getRandomArrayElement(SAMPLE_SENTENCES),
     totalRating: getRandomFloatingPoint(1, 10),
