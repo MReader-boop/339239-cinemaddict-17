@@ -26,10 +26,22 @@ export default class FilmListPresenter {
 
     for (let i = 0; i < this.#films.length; i++) {
       this.#filteredComments.push(this.comments.filter((comment) => this.#films[0].info.commentIDs.includes(comment.id)));
-      render(new FilmCardView(this.#films[i]), this.#filmContainer.element);
+      this.#renderFilmCards(this.#films[i]);
     }
 
     render(new ShowMoreButtonView(), this.#filmListComponent.element.querySelector('.films-list'));
-    render(new PopupView(this.#films[0], this.#filteredComments[0]), document.querySelector('body'), 'beforeend');
+
+  };
+
+  #renderFilmCards = (film) => {
+    const filmCardComponent = new FilmCardView(film);
+
+    render(filmCardComponent, this.#filmContainer.element);
+  };
+
+  #renderPopup = (film, comments) => {
+    const popupComponent = new PopupView(film, comments);
+
+    render(popupComponent, document.querySelector('body'), 'beforeend');
   };
 }
