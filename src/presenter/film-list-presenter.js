@@ -7,24 +7,29 @@ import PopupView from '../view/popup-view.js';
 import {render} from '../render.js';
 
 export default class FilmListPresenter {
-  filmListComponent = new FilmListView();
-  filmContainer = new FilmContainerView();
-  filteredComments = [];
+  #filmListComponent = new FilmListView();
+  #filmContainer = new FilmContainerView();
+  #filteredComments = [];
+  #filmsModel = null;
+  #films = null;
+  #commentsModel = null;
 
   init = (pageMainElement, filmsModel, commentsModel) => {
-    this.filmsModel = filmsModel;
-    this.films = [...filmsModel.films];
-    this.commentsModel = commentsModel;
-    this.comments = [...commentsModel.comments];
+    this.#filmsModel = filmsModel;
+    this.#films = [...this.#filmsModel.films];
+    this.#commentsModel = commentsModel;
+    this.comments = [...this.#commentsModel.comments];
 
     render(new SortingView(), document.querySelector('.main-navigation'), 'afterend');
-    render(this.filmListComponent, pageMainElement);
-    render(this.filmContainer, this.filmListComponent.element.querySelector('.films-list'));
-    for (let i = 0; i < this.films.length; i++) {
-      this.filteredComments.push(this.comments.filter((comment) => this.films[0].info.commentIDs.includes(comment.id)));
-      render(new FilmCardView(this.films[i]), this.filmContainer.element);
+    render(this.#filmListComponent, pageMainElement);
+    render(this.#filmContainer, this.#filmListComponent.element.querySelector('.films-list'));
+
+    for (let i = 0; i < this.#films.length; i++) {
+      this.#filteredComments.push(this.comments.filter((comment) => this.#films[0].info.commentIDs.includes(comment.id)));
+      render(new FilmCardView(this.#films[i]), this.#filmContainer.element);
     }
-    render(new ShowMoreButtonView(), this.filmListComponent.element.querySelector('.films-list'));
-    render(new PopupView(this.films[0], this.filteredComments[0]), document.querySelector('body'), 'beforeend');
+
+    render(new ShowMoreButtonView(), this.#filmListComponent.element.querySelector('.films-list'));
+    render(new PopupView(this.#films[0], this.#filteredComments[0]), document.querySelector('body'), 'beforeend');
   };
 }
