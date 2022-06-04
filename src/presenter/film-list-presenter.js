@@ -13,35 +13,72 @@ export default class FilmListPresenter {
   #filmsModel = null;
   #films = null;
   #commentsModel = null;
+  #comments = null;
+
 
   init = (pageMainElement, filmsModel, commentsModel) => {
     this.#filmsModel = filmsModel;
     this.#films = [...this.#filmsModel.films];
     this.#commentsModel = commentsModel;
-    this.comments = [...this.#commentsModel.comments];
+    this.#comments = [...this.#commentsModel.comments];
 
     render(new SortingView(), document.querySelector('.main-navigation'), 'afterend');
     render(this.#filmListComponent, pageMainElement);
     render(this.#filmContainer, this.#filmListComponent.element.querySelector('.films-list'));
 
     for (let i = 0; i < this.#films.length; i++) {
-      this.#filteredComments.push(this.comments.filter((comment) => this.#films[0].info.commentIDs.includes(comment.id)));
-      this.#renderFilmCards(this.#films[i]);
+      this.#filteredComments.push(this.#filterComments(this.#films[i], this.#comments));
+      this.#renderFilmCards(this.#films[i], this.#filteredComments[i]);
     }
 
     render(new ShowMoreButtonView(), this.#filmListComponent.element.querySelector('.films-list'));
 
   };
 
-  #renderFilmCards = (film) => {
+  #filterComments = (film, comments) => comments.filter((comment) => film.info.commentIDs.includes(comment.id));
+
+  #renderFilmCards = (film, comments) => {
     const filmCardComponent = new FilmCardView(film);
+    const documentBody = document.querySelector('body');
 
     render(filmCardComponent, this.#filmContainer.element);
+
+    filmCardComponent.element.addEventListener('click', () => {
+      documentBody.classList.add('hide-overflow');
+      this.#renderPopup(film, comments);
+    });
   };
 
   #renderPopup = (film, comments) => {
     const popupComponent = new PopupView(film, comments);
+    const documentBody = document.querySelector('body');
 
-    render(popupComponent, document.querySelector('body'), 'beforeend');
+    render(popupComponent, documentBody, 'beforeend');
+
+    const removePopup = () => {
+      documentBody.classList.remove('hide-overflow');
+      documentBody.removeChild(popupComponent.element);
+    };
+
+    const onEscKeyDown = (evt) => {
+      if (evt.key === 'Escape' || evt.key === 'Esc') {
+        removePopup();
+        document.removeEventListener('keydown', onEscKeyDown);
+      }
+    };
+
+    // const onOutOfPopupClick = (evt) => {
+    //   if (evt.target !== popupComponent.element) {
+    //     removePopup();
+    //     document.removeEventListener('keydown', onEscKeyDown);
+    //     document.removeEventListener('click', onOutOfPopupClick);
+    //   }
+    // };
+
+    // document.addEventListener('click', onOutOfPopupClick);
+    document.addEventListener('keydown', onEscKeyDown);
+    popupComponent.element.querySelector('.film-details__close-btn').addEventListener('click', () => {
+      removePopup();
+    });
   };
 }
