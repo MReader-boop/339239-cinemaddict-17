@@ -60,7 +60,8 @@ export default class FilmListPresenter {
     };
 
     const onOutOfPopupClick = (evt) => {
-      if (!popupComponent.element.contains(evt.target)) {
+      if (!popupComponent.element.contains(evt.target) &&
+      evt.target.classList[0].match(/film-card/)) {
         removePopup();
       }
     };
