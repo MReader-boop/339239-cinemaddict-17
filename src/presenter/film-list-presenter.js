@@ -53,30 +53,29 @@ export default class FilmListPresenter {
     const popupComponent = new PopupView(film, comments);
     const documentBody = document.querySelector('body');
 
-    render(popupComponent, documentBody, 'beforeend');
-
-    const removePopup = () => {
-      documentBody.classList.remove('hide-overflow');
-      documentBody.removeChild(popupComponent.element);
-    };
-
     const onEscKeyDown = (evt) => {
       if (evt.key === 'Escape' || evt.key === 'Esc') {
         removePopup();
-        document.removeEventListener('keydown', onEscKeyDown);
       }
     };
 
-    // const onOutOfPopupClick = (evt) => {
-    //   if (evt.target !== popupComponent.element) {
-    //     removePopup();
-    //     document.removeEventListener('keydown', onEscKeyDown);
-    //     document.removeEventListener('click', onOutOfPopupClick);
-    //   }
-    // };
+    const onOutOfPopupClick = (evt) => {
+      if (!popupComponent.element.contains(evt.target)) {
+        removePopup();
+      }
+    };
 
-    // document.addEventListener('click', onOutOfPopupClick);
+    function removePopup() {
+      documentBody.classList.remove('hide-overflow');
+      documentBody.removeChild(popupComponent.element);
+      document.removeEventListener('keydown', onEscKeyDown);
+      document.removeEventListener('click', onOutOfPopupClick, true);
+    }
+
+    render(popupComponent, documentBody, 'beforeend');
+
     document.addEventListener('keydown', onEscKeyDown);
+    document.addEventListener('click', onOutOfPopupClick, true);
     popupComponent.element.querySelector('.film-details__close-btn').addEventListener('click', () => {
       removePopup();
     });
