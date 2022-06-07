@@ -19,7 +19,7 @@ export const generateFilm = (_, filmID) => ({
       country: getRandomArrayElement(COUNTRIES)
     },
     runtime: getRandomInteger(70, 190),
-    genre: getRandomArrayElements(GENRES, getRandomInteger(1, GENRES.length)),
+    genres: getRandomArrayElements(GENRES, getRandomInteger(1, GENRES.length)),
     description: getRandomArrayElements(SAMPLE_SENTENCES, getRandomInteger(1, SAMPLE_SENTENCES.length)).join(' ')
   },
   userDetails: {

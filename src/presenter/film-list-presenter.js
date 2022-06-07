@@ -7,24 +7,81 @@ import PopupView from '../view/popup-view.js';
 import {render} from '../render.js';
 
 export default class FilmListPresenter {
-  filmListComponent = new FilmListView();
-  filmContainer = new FilmContainerView();
-  filteredComments = [];
+  #filmListComponent = new FilmListView();
+  #filmContainer = new FilmContainerView();
+  #filteredComments = [];
+  #filmsModel = null;
+  #films = null;
+  #commentsModel = null;
+  #comments = null;
+
 
   init = (pageMainElement, filmsModel, commentsModel) => {
-    this.filmsModel = filmsModel;
-    this.films = [...filmsModel.getFilms()];
-    this.commentsModel = commentsModel;
-    this.comments = [...commentsModel.getComments()];
+    this.#filmsModel = filmsModel;
+    this.#films = [...this.#filmsModel.films];
+    this.#commentsModel = commentsModel;
+    this.#comments = [...this.#commentsModel.comments];
 
     render(new SortingView(), document.querySelector('.main-navigation'), 'afterend');
-    render(this.filmListComponent, pageMainElement);
-    render(this.filmContainer, this.filmListComponent.getElement().querySelector('.films-list'));
-    for (let i = 0; i < this.films.length; i++) {
-      this.filteredComments.push(this.comments.filter((comment) => this.films[0].info.commentIDs.includes(comment.id)));
-      render(new FilmCardView(this.films[i]), this.filmContainer.getElement());
+    render(this.#filmListComponent, pageMainElement);
+    render(this.#filmContainer, this.#filmListComponent.element.querySelector('.films-list'));
+
+    for (let i = 0; i < this.#films.length; i++) {
+      this.#filteredComments.push(this.#filterComments(this.#films[i], this.#comments));
+      this.#renderFilmCards(this.#films[i], this.#filteredComments[i]);
     }
-    render(new ShowMoreButtonView(), this.filmListComponent.getElement().querySelector('.films-list'));
-    render(new PopupView(this.films[0], this.filteredComments[0]), document.querySelector('body'), 'beforeend');
+
+    render(new ShowMoreButtonView(), this.#filmListComponent.element.querySelector('.films-list'));
+
   };
+
+  #filterComments = (film, comments) => comments.filter((comment) => film.info.commentIDs.includes(comment.id));
+
+  #renderFilmCards = (film, comments) => {
+    const filmCardComponent = new FilmCardView(film);
+    const documentBody = document.querySelector('body');
+
+    render(filmCardComponent, this.#filmContainer.element);
+
+    filmCardComponent.element.addEventListener('click', () => {
+      documentBody.classList.add('hide-overflow');
+      this.#renderPopup(film, comments);
+    });
+  };
+
+  #renderPopup = (film, comments) => {
+    const popupComponent = new PopupView(film, comments);
+    const documentBody = document.querySelector('body');
+    const closeButton = popupComponent.element.querySelector('.film-details__close-btn');
+    const onFilmCardClickBound = onFilmCardClick.bind(this);
+
+    const onEscKeyDown = (evt) => {
+      if (evt.key === 'Escape' || evt.key === 'Esc') {
+        this.#removePopup(documentBody, popupComponent, onEscKeyDown, onFilmCardClickBound);
+      }
+    };
+
+    function onFilmCardClick(evt) {
+      if (!popupComponent.element.contains(evt.target) &&
+      evt.target.classList.length &&
+      evt.target.classList[0].match(/film-card/)) {
+        this.#removePopup(documentBody, popupComponent, onEscKeyDown, onFilmCardClickBound);
+      }
+    }
+
+    render(popupComponent, documentBody, 'beforeend');
+
+    document.addEventListener('keydown', onEscKeyDown);
+    document.addEventListener('click', onFilmCardClickBound, true);
+    closeButton.addEventListener('click', () => {
+      this.#removePopup(documentBody, popupComponent, onEscKeyDown, onFilmCardClickBound);
+    });
+  };
+
+  #removePopup(documentBody, popupComponent, onEscKeyDown, onFilmCardClickBound) {
+    documentBody.classList.remove('hide-overflow');
+    documentBody.removeChild(popupComponent.element);
+    document.removeEventListener('keydown', onEscKeyDown);
+    document.removeEventListener('click', onFilmCardClickBound, true);
+  }
 }

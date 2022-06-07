@@ -2,7 +2,7 @@ import {createElement} from '../render.js';
 import dayjs from 'dayjs';
 
 const createCardTemplate = (film) => {
-  const {poster, title, totalRating, release, runtime, genre, description, commentIDs} = film.info;
+  const {poster, title, totalRating, release, runtime, genres, description, commentIDs} = film.info;
   const {watchlist, alreadyWatched, favorite} = film.userDetails;
 
   return (`
@@ -12,7 +12,7 @@ const createCardTemplate = (film) => {
       <p class="film-card__info">
         <span class="film-card__year">${dayjs(release.date).format('YYYY')}</span>
         <span class="film-card__duration">${Math.floor(runtime/60)}h ${runtime%60}m</span>
-        <span class="film-card__genre">${genre[0]}</span>
+        <span class="film-card__genre">${genres[0]}</span>
       </p>
       <img src=${poster} alt="" class="film-card__poster">
       <p class="film-card__description">
@@ -32,23 +32,27 @@ const createCardTemplate = (film) => {
 };
 
 export default class FilmCardView {
+
+  #element = null;
+
   constructor(film) {
     this.film = film;
   }
 
-  getTemplate() {
+  get template() {
     return createCardTemplate(this.film);
   }
 
-  getElement() {
-    if(!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if(!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
+
   }
 }

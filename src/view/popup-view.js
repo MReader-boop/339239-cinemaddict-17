@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 
 const createPopupTemplate = (film, filteredComments) => {
   const {poster, ageRating, title, alternativeTitle, totalRating, director, writers,
-    actors, release, runtime, genre, description, commentIDs} = film.info;
+    actors, release, runtime, genres, description, commentIDs} = film.info;
   const {watchlist, alreadyWatched, favorite} = film.userDetails;
 
   return (`
@@ -60,7 +60,7 @@ const createPopupTemplate = (film, filteredComments) => {
                 <tr class="film-details__row">
                   <td class="film-details__term">Genres</td>
                   <td class="film-details__cell">
-                    ${genre.map((x) => `<span class="film-details__genre">${x}</span>`).join('')}
+                    ${genres.map((genre) => `<span class="film-details__genre">${genre}</span>`).join('')}
                   </td>
                 </tr>
               </table>
@@ -83,16 +83,16 @@ const createPopupTemplate = (film, filteredComments) => {
             <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${commentIDs.length}</span></h3>
 
             <ul class="film-details__comments-list">
-            ${filteredComments.map((x) =>
+            ${filteredComments.map((comment) =>
       `<li class="film-details__comment">
         <span class="film-details__comment-emoji">
-          <img src="./images/emoji/${x.emoji}.png" width="55" height="55" alt="emoji-${x.emoji}">
+          <img src="./images/emoji/${comment.emoji}.png" width="55" height="55" alt="emoji-${comment.emoji}">
         </span>
         <div>
-          <p class="film-details__comment-text">${x.text}</p>
+          <p class="film-details__comment-text">${comment.text}</p>
           <p class="film-details__comment-info">
-            <span class="film-details__comment-author">${x.author}</span>
-            <span class="film-details__comment-day">${dayjs(x.date).format('YYYY/MM/DD H:mm')}</span>
+            <span class="film-details__comment-author">${comment.author}</span>
+            <span class="film-details__comment-day">${dayjs(comment.date).format('YYYY/MM/DD H:mm')}</span>
             <button class="film-details__comment-delete">Delete</button>
           </p>
         </div>
@@ -137,24 +137,28 @@ const createPopupTemplate = (film, filteredComments) => {
 };
 
 export default class PopupView {
+
+  #element = null;
+
   constructor(film, commentIDs) {
     this.film = film;
     this.commentIDs = commentIDs;
   }
 
-  getTemplate() {
+  get template() {
     return createPopupTemplate(this.film, this.commentIDs);
   }
 
-  getElement() {
-    if(!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if(!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
+
   }
 }
