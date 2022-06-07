@@ -52,6 +52,7 @@ export default class FilmListPresenter {
   #renderPopup = (film, comments) => {
     const popupComponent = new PopupView(film, comments);
     const documentBody = document.querySelector('body');
+    const closeButton = popupComponent.element.querySelector('.film-details__close-btn');
     const onFilmCardClickBound = onFilmCardClick.bind(this);
 
     const onEscKeyDown = (evt) => {
@@ -72,7 +73,7 @@ export default class FilmListPresenter {
 
     document.addEventListener('keydown', onEscKeyDown);
     document.addEventListener('click', onFilmCardClickBound, true);
-    popupComponent.element.querySelector('.film-details__close-btn').addEventListener('click', () => {
+    closeButton.addEventListener('click', () => {
       this.#removePopup(documentBody, popupComponent, onEscKeyDown, onFilmCardClickBound);
     });
   };
