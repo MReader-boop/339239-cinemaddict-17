@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import dayjs from 'dayjs';
 
 const createPopupTemplate = (film, filteredComments) => {
@@ -136,29 +136,30 @@ const createPopupTemplate = (film, filteredComments) => {
   `);
 };
 
-export default class PopupView {
+export default class PopupView extends AbstractView {
 
-  #element = null;
+  #film = null;
+  #commentIDs = null;
 
   constructor(film, commentIDs) {
-    this.film = film;
-    this.commentIDs = commentIDs;
+    super();
+    this.#film = film;
+    this.#commentIDs = commentIDs;
   }
 
   get template() {
-    return createPopupTemplate(this.film, this.commentIDs);
+    return createPopupTemplate(this.#film, this.#commentIDs);
   }
 
-  get element() {
-    if(!this.#element) {
-      this.#element = createElement(this.template);
-    }
+  setCloseButtonClickHandler = (callback) => {
+    const closeButton = this.element.querySelector('.film-details__close-btn');
 
-    return this.#element;
-  }
+    this._callback.click = callback;
 
-  removeElement() {
-    this.#element = null;
+    closeButton.addEventListener('click', this.#closeButtonClickHandler);
+  };
 
-  }
+  #closeButtonClickHandler = () => {
+    this._callback.click();
+  };
 }
