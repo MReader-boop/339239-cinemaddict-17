@@ -1,25 +1,9 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 const createFooterContentsTemplate = () => '<p>0 movies inside</p>';
 
-export default class FooterContentsView {
-
-  #element = null;
-
+export default class FooterContentsView extends AbstractView {
   get template() {
     return createFooterContentsTemplate();
-  }
-
-  get element() {
-    if(!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
-
   }
 }
