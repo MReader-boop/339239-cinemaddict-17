@@ -4,7 +4,7 @@ import ShowMoreButtonView from '../view/show-more-button-view.js';
 import SortingView from '../view/sorting-view.js';
 import FilmContainerView from '../view/film-container-view.js';
 import FilmCardPresenter from './film-card-presenter.js';
-import {render} from '../render.js';
+import {render} from '../framework/render.js';
 
 const FILMS_COUNT_PER_STEP = 5;
 
@@ -13,13 +13,13 @@ export default class FilmListPresenter {
   #filmListComponent = new FilmListView();
   #showMoreButtonComponent = new ShowMoreButtonView();
   #filmContainer = new FilmContainerView();
+  #filmCardPresenters = new Map();
   #renderedFilmCardsAmount = FILMS_COUNT_PER_STEP;
   #filteredComments = [];
   #filmsModel = null;
   #films = null;
   #commentsModel = null;
   #comments = null;
-
 
   init = (pageMainElement, filmsModel, commentsModel) => {
     this.#filmsModel = filmsModel;
@@ -28,6 +28,7 @@ export default class FilmListPresenter {
     this.#comments = [...this.#commentsModel.comments];
 
     render(new SortingView(), document.querySelector('.main-navigation'), 'afterend');
+
     if(this.#films.length){
       render(this.#filmListComponent, pageMainElement);
       render(this.#filmContainer, this.#filmListComponent.element.querySelector('.films-list'));
