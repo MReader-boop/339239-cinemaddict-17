@@ -1,10 +1,9 @@
-import FilmCardView from '../view/film-card-view.js';
 import FilmListView from '../view/film-list-view.js';
 import NoFilmsListView from '../view/no-films-list-view.js';
 import ShowMoreButtonView from '../view/show-more-button-view.js';
 import SortingView from '../view/sorting-view.js';
 import FilmContainerView from '../view/film-container-view.js';
-import PopupPresenter from './popup-presenter.js';
+import FilmCardPresenter from './film-card-presenter.js';
 import {render} from '../render.js';
 
 const FILMS_COUNT_PER_STEP = 5;
@@ -35,7 +34,8 @@ export default class FilmListPresenter {
 
       for (let i = 0; i < Math.min(FILMS_COUNT_PER_STEP, this.#films.length); i++) {
         this.#filteredComments.push(this.#filterComments(this.#films[i], this.#comments));
-        this.#renderFilmCard(this.#films[i], this.#filteredComments[i]);
+        const filmCardPresenter = new FilmCardPresenter(this.#filmContainer);
+        filmCardPresenter.init(this.#films[i], this.#filteredComments[i]);
       }
 
       if(this.#films.length > FILMS_COUNT_PER_STEP) {
@@ -52,7 +52,8 @@ export default class FilmListPresenter {
     for (let i = this.#renderedFilmCardsAmount; i < this.#renderedFilmCardsAmount
       + Math.min(FILMS_COUNT_PER_STEP, this.#films.length - this.#renderedFilmCardsAmount); i++) {
       this.#filteredComments.push(this.#filterComments(this.#films[i], this.#comments));
-      this.#renderFilmCard(this.#films[i], this.#filteredComments[i]);
+      const filmCardPresenter = new FilmCardPresenter(this.#filmContainer);
+      filmCardPresenter.init(this.#films[i], this.#filteredComments[i]);
     }
 
     this.#renderedFilmCardsAmount += FILMS_COUNT_PER_STEP;
@@ -64,17 +65,4 @@ export default class FilmListPresenter {
   };
 
   #filterComments = (film, comments) => comments.filter((comment) => film.info.commentIDs.includes(comment.id));
-
-  #renderFilmCard = (film, comments) => {
-    const filmCardComponent = new FilmCardView(film);
-    const documentBody = document.querySelector('body');
-
-    render(filmCardComponent, this.#filmContainer.element);
-
-    filmCardComponent.setClickHandler(() => {
-      documentBody.classList.add('hide-overflow');
-      const popupPresenter = new PopupPresenter();
-      popupPresenter.init(film, comments);
-    });
-  };
 }
