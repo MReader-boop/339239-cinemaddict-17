@@ -182,11 +182,11 @@ export default class PopupView extends AbstractView {
   };
 
   #watchedButtonClickHandler = () => {
-    this._callback.watchedButtonClickHandler();
+    this._callback.watchedButtonClick();
   };
 
   #favoriteButtonClickHandler = () => {
-    this._callback.favoriteButtonClickHandler();
+    this._callback.favoriteButtonClick();
   };
 
   #closeButtonClickHandler = () => {

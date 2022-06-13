@@ -6,36 +6,86 @@ export default class FilmCardPresenter {
 
   #filmContainer = null;
   #filmCardComponent = null;
+  #updateData = null;
+  #film = null;
+  #comments = null;
+  #watchlistButton = null;
+  #watchedButton = null;
+  #favoriteButton = null;
 
-  constructor(filmContainer) {
+  constructor(filmContainer, updateData) {
     this.#filmContainer = filmContainer;
+    this.#updateData = updateData;
   }
 
   init = (film, comments) => {
-
     const prevFilmCardComponent = this.#filmCardComponent;
 
-    this.#filmCardComponent = new FilmCardView(film);
-    const documentBody = document.querySelector('body');
+    this.#film = film;
+    this.#comments = comments;
 
-    this.#filmCardComponent.setClickHandler((evt) => {
-      if(!evt.target.classList.contains('film-card__controls-item')) {
-        documentBody.classList.add('hide-overflow');
-        const popupPresenter = new PopupPresenter();
-        popupPresenter.init(film, comments);
-      }
-    });
+    this.#filmCardComponent = new FilmCardView(film);
+
+    this.#watchlistButton = this.#filmCardComponent.element.querySelector('.film-card__controls-item--add-to-watchlist');
+    this.#watchedButton = this.#filmCardComponent.element.querySelector('.film-card__controls-item--mark-as-watched');
+    this.#favoriteButton = this.#filmCardComponent.element.querySelector('.film-card__controls-item--favorite');
+
+    this.#filmCardComponent.setClickHandler(this.#handleFilmCardClick);
+    this.#filmCardComponent.setWatchlistButtonHandler(this.#handleWatchlistButtonClick);
+    this.#filmCardComponent.setWatchedButtonHandler(this.#handlewatchedButtonClick);
+    this.#filmCardComponent.setFavoriteButtonHandler(this.#handlefavoriteButtonClick);
 
     if(prevFilmCardComponent === null){
       render(this.#filmCardComponent, this.#filmContainer.element);
       return;
     }
 
-    if(this.#filmContainer.contains(prevFilmCardComponent.element)){
+    if(this.#filmContainer.element.contains(prevFilmCardComponent.element)){
       replace(this.#filmCardComponent, prevFilmCardComponent);
     }
 
     remove(prevFilmCardComponent);
+  };
+
+  #handleFilmCardClick = (evt) => {
+    if(!evt.target.classList.contains('film-card__controls-item')) {
+      document.querySelector('body').classList.add('hide-overflow');
+      const popupPresenter = new PopupPresenter();
+      popupPresenter.init(this.#film, this.#comments);
+    }
+  };
+
+  #handleWatchlistButtonClick = () => {
+    if(this.#watchlistButton.classList.contains('film-card__controls-item--active')){
+      this.#watchlistButton.classList.remove('film-card__controls-item--active');
+    } else {
+      this.#watchlistButton.classList.add('film-card__controls-item--active');
+    }
+
+    this.#film.userDetails.watchlist = !this.#film.userDetails.watchlist;
+    this.#updateData(this.#film);
+  };
+
+  #handlewatchedButtonClick = () => {
+    if(this.#watchedButton.classList.contains('film-card__controls-item--active')){
+      this.#watchedButton.classList.remove('film-card__controls-item--active');
+    } else {
+      this.#watchedButton.classList.add('film-card__controls-item--active');
+    }
+
+    this.#film.userDetails.alreadyWatched = !this.#film.userDetails.alreadyWatched;
+    this.#updateData(this.#film);
+  };
+
+  #handlefavoriteButtonClick = () => {
+    if(this.#favoriteButton.classList.contains('film-card__controls-item--active')){
+      this.#favoriteButton.classList.remove('film-card__controls-item--active');
+    } else {
+      this.#favoriteButton.classList.add('film-card__controls-item--active');
+    }
+
+    this.#film.userDetails.favorite = !this.#film.userDetails.favorite;
+    this.#updateData(this.#film);
   };
 
   destroy = () => {
