@@ -4,8 +4,19 @@ import PopupView from '../view/popup-view.js';
 export default class PopupPresenter {
 
   #popupComponent = null;
+  #film = null;
+  #comments = null;
+  #updateData = null;
+
+  constructor(updateData) {
+    this.#updateData = updateData;
+  }
 
   init = (film, comments) => {
+
+    this.#film = film;
+    this.#comments = comments;
+
     const prevPopupComponent = this.#popupComponent;
     this.#popupComponent = new PopupView(film, comments);
     const documentBody = document.querySelector('body');
@@ -31,6 +42,10 @@ export default class PopupPresenter {
       this.#removePopup(documentBody, this.#popupComponent, onEscKeyDown);
     });
 
+    this.#popupComponent.setWatchlistButtonHandler(this.#handleWatchlistButtonClick);
+    this.#popupComponent.setWatchedButtonHandler(this.#handlewatchedButtonClick);
+    this.#popupComponent.setFavoriteButtonHandler(this.#handlefavoriteButtonClick);
+
     if(prevPopupComponent === null){
       render(this.#popupComponent, documentBody, 'beforeend');
       return;
@@ -41,6 +56,25 @@ export default class PopupPresenter {
     }
 
     remove(prevPopupComponent);
+  };
+
+  #handleWatchlistButtonClick = () => {
+    if(!this.#popupComponent.element.querySelector('.film-details__control-button--watchlist').classList.contains('film-details__control-button--active')){
+      this.#popupComponent.element.querySelector('.film-details__control-button--watchlist').classList.add('film-details__control-button--active');
+    } else {
+      this.#popupComponent.element.querySelector('.film-details__control-button--watchlist').classList.remove('film-details__control-button--active');
+    }
+
+    this.#film.userDetails.watchlist = !this.#film.userDetails.watchlist;
+    this.#updateData(this.#film);
+  };
+
+  #handlewatchedButtonClick = () => {
+
+  };
+
+  #handlefavoriteButtonClick = () => {
+
   };
 
   #removePopup(documentBody, onEscKeyDown, onFilmCardClickBound) {

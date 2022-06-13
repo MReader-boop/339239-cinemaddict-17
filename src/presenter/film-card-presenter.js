@@ -50,7 +50,7 @@ export default class FilmCardPresenter {
   #handleFilmCardClick = (evt) => {
     if(!evt.target.classList.contains('film-card__controls-item')) {
       document.querySelector('body').classList.add('hide-overflow');
-      const popupPresenter = new PopupPresenter();
+      const popupPresenter = new PopupPresenter(this.#updateData);
       popupPresenter.init(this.#film, this.#comments);
     }
   };
