@@ -4,7 +4,7 @@ import NoFilmsListView from '../view/no-films-list-view.js';
 import ShowMoreButtonView from '../view/show-more-button-view.js';
 import SortingView from '../view/sorting-view.js';
 import FilmContainerView from '../view/film-container-view.js';
-import PopupView from '../view/popup-view.js';
+import PopupPresenter from './popup-presenter.js';
 import {render} from '../render.js';
 
 const FILMS_COUNT_PER_STEP = 5;
@@ -73,42 +73,8 @@ export default class FilmListPresenter {
 
     filmCardComponent.setClickHandler(() => {
       documentBody.classList.add('hide-overflow');
-      this.#renderPopup(film, comments);
+      const popupPresenter = new PopupPresenter();
+      popupPresenter.init(film, comments);
     });
   };
-
-  #renderPopup = (film, comments) => {
-    const popupComponent = new PopupView(film, comments);
-    const documentBody = document.querySelector('body');
-    const onFilmCardClickBound = onFilmCardClick.bind(this);
-
-    const onEscKeyDown = (evt) => {
-      if (evt.key === 'Escape' || evt.key === 'Esc') {
-        this.#removePopup(documentBody, popupComponent, onEscKeyDown, onFilmCardClickBound);
-      }
-    };
-
-    function onFilmCardClick(evt) {
-      if (!popupComponent.element.contains(evt.target) &&
-      evt.target.classList.length &&
-      evt.target.classList[0].match(/film-card/)) {
-        this.#removePopup(documentBody, popupComponent, onEscKeyDown, onFilmCardClickBound);
-      }
-    }
-
-    render(popupComponent, documentBody, 'beforeend');
-
-    document.addEventListener('keydown', onEscKeyDown);
-    document.addEventListener('click', onFilmCardClickBound, true);
-    popupComponent.setCloseButtonClickHandler(() => {
-      this.#removePopup(documentBody, popupComponent, onEscKeyDown, onFilmCardClickBound);
-    });
-  };
-
-  #removePopup(documentBody, popupComponent, onEscKeyDown, onFilmCardClickBound) {
-    documentBody.classList.remove('hide-overflow');
-    documentBody.removeChild(popupComponent.element);
-    document.removeEventListener('keydown', onEscKeyDown);
-    document.removeEventListener('click', onFilmCardClickBound, true);
-  }
 }
