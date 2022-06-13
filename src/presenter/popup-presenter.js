@@ -70,11 +70,25 @@ export default class PopupPresenter {
   };
 
   #handlewatchedButtonClick = () => {
+    if(!this.#popupComponent.element.querySelector('.film-details__control-button--watched').classList.contains('film-details__control-button--active')){
+      this.#popupComponent.element.querySelector('.film-details__control-button--watched').classList.add('film-details__control-button--active');
+    } else {
+      this.#popupComponent.element.querySelector('.film-details__control-button--watched').classList.remove('film-details__control-button--active');
+    }
 
+    this.#film.userDetails.alreadyWatched = !this.#film.userDetails.alreadyWatched;
+    this.#updateData(this.#film);
   };
 
   #handlefavoriteButtonClick = () => {
+    if(!this.#popupComponent.element.querySelector('.film-details__control-button--favorite').classList.contains('film-details__control-button--active')){
+      this.#popupComponent.element.querySelector('.film-details__control-button--favorite').classList.add('film-details__control-button--active');
+    } else {
+      this.#popupComponent.element.querySelector('.film-details__control-button--favorite').classList.remove('film-details__control-button--active');
+    }
 
+    this.#film.userDetails.favorite = !this.#film.userDetails.favorite;
+    this.#updateData(this.#film);
   };
 
   #removePopup(documentBody, onEscKeyDown, onFilmCardClickBound) {
