@@ -53,6 +53,14 @@ export default class FilmListPresenter {
     }
   };
 
+  #closeActivePopup = () => {
+    for (const filmCardPresenter of this.#filmCardPresenters.values()){
+      if(filmCardPresenter.popupPresenter){
+        filmCardPresenter.popupPresenter.removePopup();
+      }
+    }
+  };
+
   #onShowMoreButtonClick = () => {
     for (let i = this.#renderedFilmCardsAmount; i < this.#renderedFilmCardsAmount
       + Math.min(FILMS_COUNT_PER_STEP, this.#films.length - this.#renderedFilmCardsAmount); i++) {
@@ -73,7 +81,7 @@ export default class FilmListPresenter {
   };
 
   #renderFilmCard = (film) => {
-    const filmCardPresenter = new FilmCardPresenter(this.#filmContainer, this.#handleFilmCardChange);
+    const filmCardPresenter = new FilmCardPresenter(this.#filmContainer, this.#handleFilmCardChange, this.#closeActivePopup);
     filmCardPresenter.init(film, this.#filteredComments.get(film.info.id));
     this.#filmCardPresenters.set(film.info.id, filmCardPresenter);
   };

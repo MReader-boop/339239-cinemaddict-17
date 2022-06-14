@@ -1,12 +1,18 @@
 import {render, remove, replace} from '../framework/render.js';
 import PopupView from '../view/popup-view.js';
 
+const Mode = {
+  OPEN: 'OPEN',
+  CLOSED: 'CLOSED',
+};
+
 export default class PopupPresenter {
 
   #popupComponent = null;
   #film = null;
   #comments = null;
   #updateData = null;
+  #mode = null;
 
   constructor(updateData) {
     this.#updateData = updateData;
@@ -19,27 +25,11 @@ export default class PopupPresenter {
 
     const prevPopupComponent = this.#popupComponent;
     this.#popupComponent = new PopupView(film, comments);
-    const documentBody = document.querySelector('body');
-    //const onFilmCardClickBound = onFilmCardClick.bind(this);
+    this.#mode = Mode.OPEN;
 
-    const onEscKeyDown = (evt) => {
-      if (evt.key === 'Escape' || evt.key === 'Esc') {
-        this.#removePopup(documentBody, this.#popupComponent, onEscKeyDown);
-      }
-    };
-
-    // function onFilmCardClick(evt) {
-    //   if (!this.#popupComponent.element.contains(evt.target) &&
-    //   evt.target.classList.length &&
-    //   evt.target.classList[0].match(/film-card/)) {
-    //     this.#removePopup(documentBody, this.#popupComponent, onEscKeyDown, onFilmCardClickBound);
-    //   }
-    // }
-
-    document.addEventListener('keydown', onEscKeyDown);
-    //document.addEventListener('click', onFilmCardClickBound, true);
+    document.addEventListener('keydown', this.#onEscKeyDown);
     this.#popupComponent.setCloseButtonClickHandler(() => {
-      this.#removePopup(documentBody, this.#popupComponent, onEscKeyDown);
+      this.removePopup(this.#popupComponent);
     });
 
     this.#popupComponent.setWatchlistButtonHandler(this.#handleWatchlistButtonClick);
@@ -47,15 +37,21 @@ export default class PopupPresenter {
     this.#popupComponent.setFavoriteButtonHandler(this.#handlefavoriteButtonClick);
 
     if(prevPopupComponent === null){
-      render(this.#popupComponent, documentBody, 'beforeend');
+      render(this.#popupComponent, document.body, 'beforeend');
       return;
     }
 
-    if(document.contains(prevPopupComponent)) {
+    if(document.body.contains(prevPopupComponent.element)) {
       replace(this.#popupComponent, prevPopupComponent);
     }
 
     remove(prevPopupComponent);
+  };
+
+  #onEscKeyDown = (evt) => {
+    if (evt.key === 'Escape' || evt.key === 'Esc') {
+      this.removePopup(this.#popupComponent);
+    }
   };
 
   #handleWatchlistButtonClick = () => {
@@ -91,10 +87,12 @@ export default class PopupPresenter {
     this.#updateData(this.#film);
   };
 
-  #removePopup(documentBody, onEscKeyDown, onFilmCardClickBound) {
-    documentBody.classList.remove('hide-overflow');
-    remove(this.#popupComponent);
-    document.removeEventListener('keydown', onEscKeyDown);
-    document.removeEventListener('click', onFilmCardClickBound, true);
+  removePopup() {
+    if(this.#mode === Mode.OPEN){
+      this.#mode = Mode.CLOSED;
+      document.body.classList.remove('hide-overflow');
+      remove(this.#popupComponent);
+      document.removeEventListener('keydown', this.#onEscKeyDown);
+    }
   }
 }

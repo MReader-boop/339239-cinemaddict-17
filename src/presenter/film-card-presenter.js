@@ -12,10 +12,13 @@ export default class FilmCardPresenter {
   #watchlistButton = null;
   #watchedButton = null;
   #favoriteButton = null;
+  #closeActivePopup = null;
+  popupPresenter = null;
 
-  constructor(filmContainer, updateData) {
+  constructor(filmContainer, updateData, closeActivePopup) {
     this.#filmContainer = filmContainer;
     this.#updateData = updateData;
+    this.#closeActivePopup = closeActivePopup;
   }
 
   init = (film, comments) => {
@@ -44,14 +47,19 @@ export default class FilmCardPresenter {
       replace(this.#filmCardComponent, prevFilmCardComponent);
     }
 
+    if (this.popupPresenter) {
+      this.popupPresenter.init(this.#film, this.#comments);
+    }
+
     remove(prevFilmCardComponent);
   };
 
   #handleFilmCardClick = (evt) => {
     if(!evt.target.classList.contains('film-card__controls-item')) {
+      this.#closeActivePopup();
       document.querySelector('body').classList.add('hide-overflow');
-      const popupPresenter = new PopupPresenter(this.#updateData);
-      popupPresenter.init(this.#film, this.#comments);
+      this.popupPresenter = new PopupPresenter(this.#updateData);
+      this.popupPresenter.init(this.#film, this.#comments);
     }
   };
 
