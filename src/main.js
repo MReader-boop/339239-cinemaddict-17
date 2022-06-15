@@ -4,7 +4,7 @@ import FooterContentsView from './view/footer-contents-view.js';
 import FilmListPresenter from './presenter/film-list-presenter.js';
 import FilmsModel from './model/films-model.js';
 import CommentsModel from './model/comments-model.js';
-import {render} from './render.js';
+import {render} from './framework/render.js';
 
 const pageMainElement = document.querySelector('main');
 const pageHeaderElement = document.querySelector('header');
