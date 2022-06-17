@@ -146,12 +146,12 @@ export default class PopupView extends AbstractStatefulView {
 
   constructor(film, comments) {
     super();
-    this._setState({film: film});
-    this._setState({commentsList: comments});
-    this._setState({currentComment: {
-      text: '',
-      emoji: ''
-    }});
+    this._setState({film: film,
+      commentsList: comments,
+      currentComment: {
+        text: '',
+        emoji: ''
+      }});
 
     this.element.querySelector('.film-details__emoji-list').addEventListener('click', this.#emojiClickHandler);
   }
@@ -164,12 +164,12 @@ export default class PopupView extends AbstractStatefulView {
     if (evt.target.classList.contains('film-details__emoji-item')) {
       const prevScrollPosition = this.element.scrollTop;
 
-      this._setState({currentComment: {
+      const stateUpdate = {currentComment: {
         text: `${this._state.currentComment.text}`,
         emoji: `${evt.target.value}`
-      }});
+      }};
 
-      this.updateElement(this._state);
+      this.updateElement(stateUpdate);
       this.element.scrollTop = prevScrollPosition;
     }
   };
