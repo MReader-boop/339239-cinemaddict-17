@@ -5,7 +5,6 @@ import SortingView from '../view/sorting-view.js';
 import FilmContainerView from '../view/film-container-view.js';
 import FilmCardPresenter from './film-card-presenter.js';
 import {remove, render} from '../framework/render.js';
-import {updateItem} from '../utils.js';
 import {sortByRating, sortByDate} from '../film-utils.js';
 import {SortType} from '../constants.js';
 
@@ -17,13 +16,11 @@ export default class FilmListPresenter {
   #showMoreButtonComponent = new ShowMoreButtonView();
   #filmContainer = new FilmContainerView();
   #filmCardPresenters = new Map();
-  #filteredComments = new Map();
   #renderedFilmCardsAmount = FILMS_COUNT_PER_STEP;
   #pageMainElement = null;
   #sortingComponent = null;
   #filmsModel = null;
   #commentsModel = null;
-  #comments = null;
   #currentSortType = SortType.DEFAULT;
 
   get films() {
@@ -33,7 +30,6 @@ export default class FilmListPresenter {
       case SortType.RATING:
         return [...this.#filmsModel.films].sort(sortByRating);
     }
-
     return this.#filmsModel.films;
   }
 
@@ -44,7 +40,6 @@ export default class FilmListPresenter {
   init = (pageMainElement, filmsModel, commentsModel) => {
     this.#filmsModel = filmsModel;
     this.#commentsModel = commentsModel;
-    this.#comments = [...this.#commentsModel.comments];
     this.#pageMainElement = pageMainElement;
 
     this.#renderFilmCardsList();
@@ -55,10 +50,6 @@ export default class FilmListPresenter {
 
     films.forEach((film) => {
       this.#renderFilmCard(film);
-    });
-
-    films.forEach((film) => {
-      this.#filteredComments.set(film.info.id, this.#filterComments(film, this.#comments));
     });
   };
 
@@ -119,13 +110,13 @@ export default class FilmListPresenter {
   };
 
   #handleFilmCardChange = (updatedFilm) => {
-    this.films = updateItem(this.films, updatedFilm);
-    this.#filmCardPresenters.get(updatedFilm.info.id).init(updatedFilm, this.#filteredComments.get(updatedFilm.info.id));
+    this.#filmsModel.updateFilm('PATCH', updatedFilm);
+    this.#filmCardPresenters.get(updatedFilm.info.id).init(updatedFilm, this.comments);
   };
 
   #renderFilmCard = (film) => {
     const filmCardPresenter = new FilmCardPresenter(this.#filmContainer, this.#handleFilmCardChange, this.#closeActivePopup);
-    filmCardPresenter.init(film, this.#filteredComments.get(film.info.id));
+    filmCardPresenter.init(film, this.comments);
     this.#filmCardPresenters.set(film.info.id, filmCardPresenter);
   };
 
@@ -139,6 +130,4 @@ export default class FilmListPresenter {
     this.#clearFilmList();
     this.#renderFilmCardsList(this.films);
   };
-
-  #filterComments = (film, comments) => comments.filter((comment) => film.info.commentIDs.includes(comment.id));
 }

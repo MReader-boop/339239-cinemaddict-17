@@ -21,7 +21,7 @@ export default class PopupPresenter {
   init = (film, comments) => {
 
     this.#film = film;
-    this.#comments = comments;
+    this.#comments = this.#filterComments(film, comments);
 
     const prevPopupComponent = this.#popupComponent;
     this.#popupComponent = new PopupView(film, comments);
@@ -55,37 +55,21 @@ export default class PopupPresenter {
   };
 
   #handleWatchlistButtonClick = () => {
-    if(!this.#popupComponent.element.querySelector('.film-details__control-button--watchlist').classList.contains('film-details__control-button--active')){
-      this.#popupComponent.element.querySelector('.film-details__control-button--watchlist').classList.add('film-details__control-button--active');
-    } else {
-      this.#popupComponent.element.querySelector('.film-details__control-button--watchlist').classList.remove('film-details__control-button--active');
-    }
-
     this.#film.userDetails.watchlist = !this.#film.userDetails.watchlist;
     this.#updateData(this.#film);
   };
 
   #handlewatchedButtonClick = () => {
-    if(!this.#popupComponent.element.querySelector('.film-details__control-button--watched').classList.contains('film-details__control-button--active')){
-      this.#popupComponent.element.querySelector('.film-details__control-button--watched').classList.add('film-details__control-button--active');
-    } else {
-      this.#popupComponent.element.querySelector('.film-details__control-button--watched').classList.remove('film-details__control-button--active');
-    }
-
     this.#film.userDetails.alreadyWatched = !this.#film.userDetails.alreadyWatched;
     this.#updateData(this.#film);
   };
 
   #handlefavoriteButtonClick = () => {
-    if(!this.#popupComponent.element.querySelector('.film-details__control-button--favorite').classList.contains('film-details__control-button--active')){
-      this.#popupComponent.element.querySelector('.film-details__control-button--favorite').classList.add('film-details__control-button--active');
-    } else {
-      this.#popupComponent.element.querySelector('.film-details__control-button--favorite').classList.remove('film-details__control-button--active');
-    }
-
     this.#film.userDetails.favorite = !this.#film.userDetails.favorite;
     this.#updateData(this.#film);
   };
+
+  #filterComments = (film, comments) => comments.filter((comment) => film.info.commentIDs.includes(comment.id));
 
   removePopup() {
     if(this.#mode === Mode.OPEN){

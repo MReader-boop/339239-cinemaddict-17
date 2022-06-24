@@ -27,7 +27,7 @@ export default class FilmCardPresenter {
     this.#film = film;
     this.#comments = comments;
 
-    this.#filmCardComponent = new FilmCardView(film);
+    this.#filmCardComponent = new FilmCardView(this.#film);
 
     this.#watchlistButton = this.#filmCardComponent.element.querySelector('.film-card__controls-item--add-to-watchlist');
     this.#watchedButton = this.#filmCardComponent.element.querySelector('.film-card__controls-item--mark-as-watched');
