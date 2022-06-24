@@ -24,7 +24,7 @@ export default class PopupPresenter {
     this.#comments = this.#filterComments(film, comments);
 
     const prevPopupComponent = this.#popupComponent;
-    this.#popupComponent = new PopupView(film, comments);
+    this.#popupComponent = new PopupView(film, this.#comments);
     this.#mode = Mode.OPEN;
 
     document.addEventListener('keydown', this.#onEscKeyDown);
@@ -42,7 +42,10 @@ export default class PopupPresenter {
     }
 
     if(document.body.contains(prevPopupComponent.element)) {
+      const prevScrollPosition = prevPopupComponent.element.scrollTop;
       replace(this.#popupComponent, prevPopupComponent);
+
+      this.#popupComponent.element.scrollTop = prevScrollPosition;
     }
 
     remove(prevPopupComponent);

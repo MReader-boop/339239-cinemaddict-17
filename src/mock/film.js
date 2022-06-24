@@ -1,5 +1,5 @@
 import {getRandomInteger, getRandomFloatingPoint, getRandomArrayElement, getRandomArrayElements} from '../utils.js';
-import {AGE_RATINGS, FILM_NAMES, POSTERS, SAMPLE_SENTENCES, GENRES, DIRECTORS, WRITERS, ACTORS, COUNTRIES} from '../constants.js';
+import {AGE_RATINGS, FILM_NAMES, POSTERS, SAMPLE_SENTENCES, GENRES, DIRECTORS, WRITERS, ACTORS, COUNTRIES} from '../mock-constants.js';
 import dayjs from 'dayjs';
 
 export const generateFilm = (_, filmID) => ({

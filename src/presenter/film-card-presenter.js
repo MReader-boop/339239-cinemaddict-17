@@ -64,34 +64,16 @@ export default class FilmCardPresenter {
   };
 
   #handleWatchlistButtonClick = () => {
-    if(this.#watchlistButton.classList.contains('film-card__controls-item--active')){
-      this.#watchlistButton.classList.remove('film-card__controls-item--active');
-    } else {
-      this.#watchlistButton.classList.add('film-card__controls-item--active');
-    }
-
     this.#film.userDetails.watchlist = !this.#film.userDetails.watchlist;
     this.#updateData(this.#film);
   };
 
   #handlewatchedButtonClick = () => {
-    if(this.#watchedButton.classList.contains('film-card__controls-item--active')){
-      this.#watchedButton.classList.remove('film-card__controls-item--active');
-    } else {
-      this.#watchedButton.classList.add('film-card__controls-item--active');
-    }
-
     this.#film.userDetails.alreadyWatched = !this.#film.userDetails.alreadyWatched;
     this.#updateData(this.#film);
   };
 
   #handlefavoriteButtonClick = () => {
-    if(this.#favoriteButton.classList.contains('film-card__controls-item--active')){
-      this.#favoriteButton.classList.remove('film-card__controls-item--active');
-    } else {
-      this.#favoriteButton.classList.add('film-card__controls-item--active');
-    }
-
     this.#film.userDetails.favorite = !this.#film.userDetails.favorite;
     this.#updateData(this.#film);
   };
