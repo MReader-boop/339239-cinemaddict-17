@@ -42,8 +42,15 @@ export default class FilmListPresenter {
     this.#commentsModel = commentsModel;
     this.#pageMainElement = pageMainElement;
 
-    this.#renderFilmCardsList();
+    this.#filmsModel.addObserver(this.#handleModelEvent);
 
+    this.#renderFilmCardsList();
+  };
+
+  #renderFilmCard = (film) => {
+    const filmCardPresenter = new FilmCardPresenter(this.#filmContainer, this.#handleUserAction, this.#closeActivePopup);
+    filmCardPresenter.init(film, this.comments);
+    this.#filmCardPresenters.set(film.info.id, filmCardPresenter);
   };
 
   #renderFilmCards = (films) => {
@@ -109,15 +116,17 @@ export default class FilmListPresenter {
     }
   };
 
+  #handleModelEvent = (updateType, data) => {
+    console.log(updateType, data);
+  };
+
+  #handleUserAction = (actionType, updateType, update) => {
+    console.log(actionType, updateType, update);
+  };
+
   #handleFilmCardChange = (updatedFilm) => {
     this.#filmsModel.updateFilm('PATCH', updatedFilm);
     this.#filmCardPresenters.get(updatedFilm.info.id).init(updatedFilm, this.comments);
-  };
-
-  #renderFilmCard = (film) => {
-    const filmCardPresenter = new FilmCardPresenter(this.#filmContainer, this.#handleFilmCardChange, this.#closeActivePopup);
-    filmCardPresenter.init(film, this.comments);
-    this.#filmCardPresenters.set(film.info.id, filmCardPresenter);
   };
 
   #handleSortTypeChange = (sortType) => {

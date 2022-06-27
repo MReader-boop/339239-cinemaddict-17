@@ -1,4 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
+import {filter} from '../utils/filter.js';
 
 const createNavigationTemplate = () => `
 <nav class="main-navigation">
@@ -9,6 +10,14 @@ const createNavigationTemplate = () => `
 </nav>`;
 
 export default class NavigationView extends AbstractView {
+
+  #films = null;
+
+  constructor(films) {
+    super();
+    this.#films = films;
+  }
+
   get template() {
     return createNavigationTemplate();
   }

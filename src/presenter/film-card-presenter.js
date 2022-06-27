@@ -1,6 +1,7 @@
 import PopupPresenter from './popup-presenter.js';
 import FilmCardView from '../view/film-card-view.js';
 import {render, remove, replace} from '../framework/render.js';
+import {UserAction, UpdateType} from '../constants/constants.js';
 
 export default class FilmCardPresenter {
 
@@ -65,17 +66,17 @@ export default class FilmCardPresenter {
 
   #handleWatchlistButtonClick = () => {
     this.#film.userDetails.watchlist = !this.#film.userDetails.watchlist;
-    this.#updateData(this.#film);
+    this.#updateData(UserAction.SWITCH_WATCHLIST, UpdateType.PATCH, this.#film);
   };
 
   #handlewatchedButtonClick = () => {
     this.#film.userDetails.alreadyWatched = !this.#film.userDetails.alreadyWatched;
-    this.#updateData(this.#film);
+    this.#updateData(UserAction.SWITCH_WATCHED, UpdateType.PATCH, this.#film);
   };
 
   #handlefavoriteButtonClick = () => {
     this.#film.userDetails.favorite = !this.#film.userDetails.favorite;
-    this.#updateData(this.#film);
+    this.#updateData(UserAction.SWITCH_FAVORITES, UpdateType.PATCH, this.#film);
   };
 
   destroy = () => {

@@ -1,4 +1,5 @@
 import {render, remove, replace} from '../framework/render.js';
+import {UserAction, UpdateType} from '../constants/constants.js';
 import PopupView from '../view/popup-view.js';
 
 const Mode = {
@@ -59,17 +60,17 @@ export default class PopupPresenter {
 
   #handleWatchlistButtonClick = () => {
     this.#film.userDetails.watchlist = !this.#film.userDetails.watchlist;
-    this.#updateData(this.#film);
+    this.#updateData(UserAction.SWITCH_WATCHLIST, UpdateType.MINOR, this.#film);
   };
 
   #handlewatchedButtonClick = () => {
     this.#film.userDetails.alreadyWatched = !this.#film.userDetails.alreadyWatched;
-    this.#updateData(this.#film);
+    this.#updateData(UserAction.SWITCH_WATCHED, UpdateType.MINOR, this.#film);
   };
 
   #handlefavoriteButtonClick = () => {
     this.#film.userDetails.favorite = !this.#film.userDetails.favorite;
-    this.#updateData(this.#film);
+    this.#updateData(UserAction.SWITCH_FAVORITES, UpdateType.MINOR, this.#film);
   };
 
   #filterComments = (film, comments) => comments.filter((comment) => film.info.commentIDs.includes(comment.id));
