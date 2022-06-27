@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import {SortType} from '../constants.js';
+import {SortType} from '../constants/constants.js';
 
 const createSortingTemplate = (currentSortType) => (`
   <ul class="sort">

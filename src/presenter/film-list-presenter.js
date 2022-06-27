@@ -5,8 +5,8 @@ import SortingView from '../view/sorting-view.js';
 import FilmContainerView from '../view/film-container-view.js';
 import FilmCardPresenter from './film-card-presenter.js';
 import {remove, render} from '../framework/render.js';
-import {sortByRating, sortByDate} from '../film-utils.js';
-import {SortType} from '../constants.js';
+import {sortByRating, sortByDate} from '../utils/film-utils.js';
+import {SortType} from '../constants/constants.js';
 
 const FILMS_COUNT_PER_STEP = 5;
 

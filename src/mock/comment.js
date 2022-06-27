@@ -1,6 +1,6 @@
-import {getRandomInteger, getRandomArrayElement} from '../utils.js';
-import {SAMPLE_SENTENCES, COMMENT_AUTHORS} from '../mock-constants.js';
-import {EMOJIS} from '../constants.js';
+import {getRandomInteger, getRandomArrayElement} from '../utils/utils.js';
+import {SAMPLE_SENTENCES, COMMENT_AUTHORS} from '../constants/mock-constants.js';
+import {EMOJIS} from '../constants/constants.js';
 import dayjs from 'dayjs';
 
 export const generateComment = (_, commentID) => ({
