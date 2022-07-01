@@ -21,11 +21,13 @@ export default class FilmListPresenter {
   #sortingComponent = null;
   #filmsModel = null;
   #commentsModel = null;
+  #filtersModel = null;
   #currentSortType = SortType.DEFAULT;
 
-  constructor(pageMainElement, filmsModel, commentsModel) {
+  constructor(pageMainElement, filmsModel, commentsModel, filtersModel) {
     this.#filmsModel = filmsModel;
     this.#commentsModel = commentsModel;
+    this.#filtersModel = filtersModel;
     this.#pageMainElement = pageMainElement;
   }
 
