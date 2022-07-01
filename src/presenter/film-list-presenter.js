@@ -21,13 +21,11 @@ export default class FilmListPresenter {
   #sortingComponent = null;
   #filmsModel = null;
   #commentsModel = null;
-  #filtersModel = null;
   #currentSortType = SortType.DEFAULT;
 
-  constructor(pageMainElement, filmsModel, commentsModel, filtersModel) {
+  constructor(pageMainElement, filmsModel, commentsModel) {
     this.#filmsModel = filmsModel;
     this.#commentsModel = commentsModel;
-    this.#filtersModel = filtersModel;
     this.#pageMainElement = pageMainElement;
   }
 
@@ -152,7 +150,7 @@ export default class FilmListPresenter {
         this.#commentsModel.deleteComment(updateType, update);
         break;
       case UserAction.CHANGE_FILTER:
-        //здесь будет фильтрация
+        //
         break;
     }
   };

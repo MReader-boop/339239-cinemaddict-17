@@ -1,4 +1,3 @@
-import FiltersView from './view/filters-view.js';
 import ProfileView from './view/profile-view.js';
 import FooterContentsView from './view/footer-contents-view.js';
 import FilmListPresenter from './presenter/film-list-presenter.js';
@@ -11,12 +10,11 @@ import {render} from './framework/render.js';
 const pageMainElement = document.querySelector('main');
 const pageHeaderElement = document.querySelector('header');
 const footerStatisticsElement = document.querySelector('.footer__statistics');
-const filtersComponent = new FiltersView();
 const filmsModel = new FilmsModel();
 const commentsModel = new CommentsModel();
 const filtersModel = new FiltersModel();
-const filtersPresenter = new FiltersPresenter(filtersComponent, pageMainElement);
-const filmListPresenter = new FilmListPresenter(pageMainElement, filmsModel, commentsModel, filtersModel);
+const filtersPresenter = new FiltersPresenter(pageMainElement, filtersModel, filmsModel);
+const filmListPresenter = new FilmListPresenter(pageMainElement, filmsModel, commentsModel);
 
 
 render(new ProfileView(), pageHeaderElement);
