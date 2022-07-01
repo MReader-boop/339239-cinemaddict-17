@@ -60,17 +60,17 @@ export default class PopupPresenter {
 
   #handleWatchlistButtonClick = () => {
     this.#film.userDetails.watchlist = !this.#film.userDetails.watchlist;
-    this.#updateData(UserAction.SWITCH_WATCHLIST, UpdateType.MINOR, this.#film);
+    this.#updateData(UserAction.SWITCH_WATCHLIST, UpdateType.PATCH, this.#film);
   };
 
   #handlewatchedButtonClick = () => {
     this.#film.userDetails.alreadyWatched = !this.#film.userDetails.alreadyWatched;
-    this.#updateData(UserAction.SWITCH_WATCHED, UpdateType.MINOR, this.#film);
+    this.#updateData(UserAction.SWITCH_WATCHED, UpdateType.PATCH, this.#film);
   };
 
   #handlefavoriteButtonClick = () => {
     this.#film.userDetails.favorite = !this.#film.userDetails.favorite;
-    this.#updateData(UserAction.SWITCH_FAVORITES, UpdateType.MINOR, this.#film);
+    this.#updateData(UserAction.SWITCH_FAVORITES, UpdateType.PATCH, this.#film);
   };
 
   #filterComments = (film, comments) => comments.filter((comment) => film.info.commentIDs.includes(comment.id));
