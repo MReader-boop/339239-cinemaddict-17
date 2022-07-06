@@ -7,6 +7,7 @@ import FilmCardPresenter from './film-card-presenter.js';
 import {remove, render} from '../framework/render.js';
 import {sortByRating, sortByDate} from '../utils/film-utils.js';
 import {SortType, UserAction, UpdateType} from '../constants/constants.js';
+import { filter } from '../utils/filter.js';
 
 const FILMS_COUNT_PER_STEP = 5;
 
@@ -20,23 +21,27 @@ export default class FilmListPresenter {
   #pageMainElement = null;
   #sortingComponent = null;
   #filmsModel = null;
+  #filtersModel = null;
   #commentsModel = null;
   #currentSortType = SortType.DEFAULT;
 
-  constructor(pageMainElement, filmsModel, commentsModel) {
+  constructor(pageMainElement, filmsModel, commentsModel, filtersModel) {
     this.#filmsModel = filmsModel;
     this.#commentsModel = commentsModel;
+    this.#filtersModel = filtersModel;
     this.#pageMainElement = pageMainElement;
   }
 
   get films() {
+    const films = this.#filmsModel.films;
+    const filteredFilms = filter[this.#filtersModel.filter](films);
     switch (this.#currentSortType) {
       case SortType.DATE:
-        return this.#filmsModel.films.slice().sort(sortByDate);
+        return filteredFilms.slice().sort(sortByDate);
       case SortType.RATING:
-        return this.#filmsModel.films.slice().sort(sortByRating);
+        return filteredFilms.slice().sort(sortByRating);
     }
-    return this.#filmsModel.films;
+    return filteredFilms;
   }
 
   get comments() {
@@ -44,6 +49,7 @@ export default class FilmListPresenter {
   }
 
   init = () => {
+    this.#filtersModel.addObserver(this.#handleModelEvent);
     this.#filmsModel.addObserver(this.#handleModelEvent);
     this.#renderFilmCardsList();
   };
@@ -118,17 +124,14 @@ export default class FilmListPresenter {
 
   #handleModelEvent = (updateType, data) => {
     switch (updateType) {
-      case UpdateType.PATCH:
+      case UpdateType.MINOR:
         //обновить фильм и попап, если он открыт
         this.#filmCardPresenters.get(data.info.id).init(data, this.comments);
         break;
-      case UpdateType.MINOR:
-        //обновить список фильмов (например если выбран фильтр вотчлиста, и пользователь убирает оттуда фильм)
-        this.#clearFilmList();
-        this.#renderFilmCardsList(this.films);
-        break;
       case UpdateType.MAJOR:
         //обновить всю доску (например при переключении фильтра)
+        this.#handleSortTypeChange(SortType.DEFAULT);
+        remove(this.#sortingComponent);
         this.#clearFilmList();
         this.#renderFilmCardsList(this.films);
         break;
@@ -136,6 +139,24 @@ export default class FilmListPresenter {
   };
 
   #handleUserAction = (actionType, updateType, update) => {
+    // let watchlist = 0;
+    // let history = 0;
+    // let favorites = 0;
+
+    // console.log('--------------------------------------------------------');
+    // this.#filmsModel.films.forEach((film) => {
+    //   if(film.userDetails.watchlist){
+    //     watchlist+=1;
+    //   }
+    //   if(film.userDetails.alreadyWatched){
+    //     history+=1;
+    //   }
+    //   if(film.userDetails.favorite){
+    //     favorites+=1;
+    //   }
+    // });
+    // console.log(watchlist, history, favorites);
+
     switch (actionType) {
       case UserAction.SWITCH_WATCHLIST:
         this.#filmsModel.updateFilm(updateType, update);
@@ -145,12 +166,6 @@ export default class FilmListPresenter {
         break;
       case UserAction.SWITCH_FAVORITES:
         this.#filmsModel.updateFilm(updateType, update);
-        break;
-      case UserAction.DELETE_COMMENT:
-        this.#commentsModel.deleteComment(updateType, update);
-        break;
-      case UserAction.CHANGE_FILTER:
-        //
         break;
     }
   };

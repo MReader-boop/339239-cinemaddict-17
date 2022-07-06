@@ -36,8 +36,8 @@ export default class FilmCardPresenter {
 
     this.#filmCardComponent.setClickHandler(this.#handleFilmCardClick);
     this.#filmCardComponent.setWatchlistButtonHandler(this.#handleWatchlistButtonClick);
-    this.#filmCardComponent.setWatchedButtonHandler(this.#handlewatchedButtonClick);
-    this.#filmCardComponent.setFavoriteButtonHandler(this.#handlefavoriteButtonClick);
+    this.#filmCardComponent.setWatchedButtonHandler(this.#handleWatchedButtonClick);
+    this.#filmCardComponent.setFavoriteButtonHandler(this.#handleFavoriteButtonClick);
 
     if(prevFilmCardComponent === null){
       render(this.#filmCardComponent, this.#filmContainer.element);
@@ -66,17 +66,17 @@ export default class FilmCardPresenter {
 
   #handleWatchlistButtonClick = () => {
     this.#film.userDetails.watchlist = !this.#film.userDetails.watchlist;
-    this.#updateData(UserAction.SWITCH_WATCHLIST, UpdateType.PATCH, this.#film);
+    this.#updateData(UserAction.SWITCH_WATCHLIST, UpdateType.MINOR, this.#film);
   };
 
-  #handlewatchedButtonClick = () => {
+  #handleWatchedButtonClick = () => {
     this.#film.userDetails.alreadyWatched = !this.#film.userDetails.alreadyWatched;
-    this.#updateData(UserAction.SWITCH_WATCHED, UpdateType.PATCH, this.#film);
+    this.#updateData(UserAction.SWITCH_WATCHED, UpdateType.MINOR, this.#film);
   };
 
-  #handlefavoriteButtonClick = () => {
+  #handleFavoriteButtonClick = () => {
     this.#film.userDetails.favorite = !this.#film.userDetails.favorite;
-    this.#updateData(UserAction.SWITCH_FAVORITES, UpdateType.PATCH, this.#film);
+    this.#updateData(UserAction.SWITCH_FAVORITES, UpdateType.MINOR, this.#film);
   };
 
   destroy = () => {

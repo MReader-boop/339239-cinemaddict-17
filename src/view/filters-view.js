@@ -27,13 +27,6 @@ const createFilterTemplate = (filter, currentFilter) => {
 const createFiltersTemplate = (filters, currentFilter) => `
     <nav class="main-navigation">${filters.map((filter) => createFilterTemplate(filter, currentFilter)).join('')}</nav>`;
 
-{/*
-<a href="#all" class="main-navigation__item main-navigation__item--active">All movies</a>
-<a href="#watchlist" class="main-navigation__item">Watchlist <span class="main-navigation__item-count">0</span></a>
-<a href="#history" class="main-navigation__item">History <span class="main-navigation__item-count">0</span></a>
-<a href="#favorites" class="main-navigation__item">Favorites <span class="main-navigation__item-count">0</span></a>
-*/}
-
 export default class FiltersView extends AbstractView {
 
   #films = null;
@@ -49,4 +42,41 @@ export default class FiltersView extends AbstractView {
   get template() {
     return createFiltersTemplate(this.#filters, this.#currentFilter);
   }
+
+  setAllFilterClickHandler = (callback) => {
+    this._callback.allFilterClick = callback;
+    this.element.querySelector('[href="#all"]').addEventListener('click', this.#allFilterClickHandler);
+  };
+
+  setWatchlistFilterClickHandler = (callback) => {
+    this._callback.watchlistFilterClick = callback;
+    this.element.querySelector('[href="#watchlist"]').addEventListener('click', this.#watchlistFilterClickHandler);
+  };
+
+  setHistoryFilterClickHandler = (callback) => {
+    this._callback.historyFilterClick = callback;
+    this.element.querySelector('[href="#history"]').addEventListener('click', this.#historyFilterClickHandler);
+
+  };
+
+  setFavoritesFilterClickHandler = (callback) => {
+    this._callback.favoritesFilterClick = callback;
+    this.element.querySelector('[href="#favorites"]').addEventListener('click', this.#favoritesFilterClickHandler);
+  };
+
+  #allFilterClickHandler = (evt) => {
+    this._callback.allFilterClick(evt);
+  };
+
+  #watchlistFilterClickHandler = (evt) => {
+    this._callback.watchlistFilterClick(evt);
+  };
+
+  #historyFilterClickHandler = (evt) => {
+    this._callback.historyFilterClick(evt);
+  };
+
+  #favoritesFilterClickHandler = (evt) => {
+    this._callback.favoritesFilterClick(evt);
+  };
 }

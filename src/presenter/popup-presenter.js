@@ -34,8 +34,8 @@ export default class PopupPresenter {
     });
 
     this.#popupComponent.setWatchlistButtonHandler(this.#handleWatchlistButtonClick);
-    this.#popupComponent.setWatchedButtonHandler(this.#handlewatchedButtonClick);
-    this.#popupComponent.setFavoriteButtonHandler(this.#handlefavoriteButtonClick);
+    this.#popupComponent.setWatchedButtonHandler(this.#handleWatchedButtonClick);
+    this.#popupComponent.setFavoriteButtonHandler(this.#handleFavoriteButtonClick);
 
     if(prevPopupComponent === null){
       render(this.#popupComponent, document.body, 'beforeend');
@@ -60,17 +60,17 @@ export default class PopupPresenter {
 
   #handleWatchlistButtonClick = () => {
     this.#film.userDetails.watchlist = !this.#film.userDetails.watchlist;
-    this.#updateData(UserAction.SWITCH_WATCHLIST, UpdateType.PATCH, this.#film);
+    this.#updateData(UserAction.SWITCH_WATCHLIST, UpdateType.MINOR, this.#film);
   };
 
-  #handlewatchedButtonClick = () => {
+  #handleWatchedButtonClick = () => {
     this.#film.userDetails.alreadyWatched = !this.#film.userDetails.alreadyWatched;
-    this.#updateData(UserAction.SWITCH_WATCHED, UpdateType.PATCH, this.#film);
+    this.#updateData(UserAction.SWITCH_WATCHED, UpdateType.MINOR, this.#film);
   };
 
-  #handlefavoriteButtonClick = () => {
+  #handleFavoriteButtonClick = () => {
     this.#film.userDetails.favorite = !this.#film.userDetails.favorite;
-    this.#updateData(UserAction.SWITCH_FAVORITES, UpdateType.PATCH, this.#film);
+    this.#updateData(UserAction.SWITCH_FAVORITES, UpdateType.MINOR, this.#film);
   };
 
   #filterComments = (film, comments) => comments.filter((comment) => film.info.commentIDs.includes(comment.id));

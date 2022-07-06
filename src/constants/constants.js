@@ -14,7 +14,6 @@ const FilterType = {
 const EMOJIS = ['smile', 'sleeping', 'puke', 'angry'];
 
 const UpdateType = {
-  PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR'
 };
