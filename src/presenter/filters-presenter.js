@@ -57,9 +57,6 @@ export default class FiltersPresenter {
   #handleModelEvent = () => {
     remove(this.#filtersComponent);
     this.init();
-    // console.log(filter.WATCHLIST(this.#filmsModel.films).length);
-    // console.log(filter.HISTORY(this.#filmsModel.films).length);
-    // console.log(filter.FAVORITES(this.#filmsModel.films).length);
   };
 
   #handleUserAction = (newFilterType) => {

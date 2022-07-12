@@ -12,9 +12,9 @@ import { filter } from '../utils/filter.js';
 const FILMS_COUNT_PER_STEP = 5;
 
 export default class FilmListPresenter {
-  #noFilmsListComponent = new NoFilmsListView();
-  #filmListComponent = new FilmListView();
   #showMoreButtonComponent = new ShowMoreButtonView();
+  #noFilmsListComponent = null;
+  #filmListComponent = new FilmListView();
   #filmContainer = new FilmContainerView();
   #filmCardPresenters = new Map();
   #renderedFilmCardsAmount = FILMS_COUNT_PER_STEP;
@@ -23,6 +23,7 @@ export default class FilmListPresenter {
   #filmsModel = null;
   #filtersModel = null;
   #commentsModel = null;
+  #currentPopupID = null;
   #currentSortType = SortType.DEFAULT;
 
   constructor(pageMainElement, filmsModel, commentsModel, filtersModel) {
@@ -67,22 +68,42 @@ export default class FilmListPresenter {
   };
 
   #renderFilmCardsList = () => {
+    if (this.#noFilmsListComponent) {
+      remove(this.#noFilmsListComponent);
+    }
     if(this.films.length) {
       const filmsCount = this.films.length;
-      const films = this.films.slice(0, Math.min(filmsCount, FILMS_COUNT_PER_STEP));
-
+      const films = this.films.slice(0, Math.min(filmsCount, this.#renderedFilmCardsAmount));
       this.#renderSortControls();
+
       render(this.#filmListComponent, this.#pageMainElement);
       render(this.#filmContainer, this.#filmListComponent.element.querySelector('.films-list'));
 
       this.#renderFilmCards(films);
 
-      if(filmsCount > FILMS_COUNT_PER_STEP) {
+      if(filmsCount > this.#renderedFilmCardsAmount) {
         render(this.#showMoreButtonComponent, this.#filmListComponent.element.querySelector('.films-list'));
 
         this.#showMoreButtonComponent.setClickHandler(this.#onShowMoreButtonClick);
       }
     } else {
+      remove(this.#filmContainer);
+      remove(this.#filmListComponent);
+      this.#noFilmsListComponent = new NoFilmsListView(this.#filtersModel.filter);
+      render(this.#noFilmsListComponent, this.#pageMainElement);
+    }
+  };
+
+  #updateFilmList = () => {
+    this.#clearFilmList();
+    if(this.films.length) {
+      remove(this.#sortingComponent);
+      this.#renderFilmCardsList();
+    } else {
+      remove(this.#filmContainer);
+      remove(this.#filmListComponent);
+      remove(this.#sortingComponent);
+      this.#noFilmsListComponent = new NoFilmsListView(this.#filtersModel.filter);
       render(this.#noFilmsListComponent, this.#pageMainElement);
     }
   };
@@ -90,7 +111,6 @@ export default class FilmListPresenter {
   #clearFilmList = () => {
     this.#filmCardPresenters.forEach((presenter) => presenter.destroy());
     this.#filmCardPresenters.clear();
-    this.#renderedFilmCardsAmount = FILMS_COUNT_PER_STEP;
     remove(this.#showMoreButtonComponent);
   };
 
@@ -105,8 +125,13 @@ export default class FilmListPresenter {
     for (const filmCardPresenter of this.#filmCardPresenters.values()){
       if(filmCardPresenter.popupPresenter){
         filmCardPresenter.popupPresenter.removePopup();
+        return;
       }
     }
+  };
+
+  #updateActivePopup = () => {
+
   };
 
   #onShowMoreButtonClick = () => {
@@ -122,14 +147,15 @@ export default class FilmListPresenter {
     }
   };
 
-  #handleModelEvent = (updateType, data) => {
+  #handleModelEvent = (updateType) => {
     switch (updateType) {
       case UpdateType.MINOR:
         //обновить фильм и попап, если он открыт
-        this.#filmCardPresenters.get(data.info.id).init(data, this.comments);
+        this.#updateFilmList();
         break;
       case UpdateType.MAJOR:
         //обновить всю доску (например при переключении фильтра)
+        this.#renderedFilmCardsAmount = FILMS_COUNT_PER_STEP;
         this.#handleSortTypeChange(SortType.DEFAULT);
         remove(this.#sortingComponent);
         this.#clearFilmList();
@@ -139,24 +165,6 @@ export default class FilmListPresenter {
   };
 
   #handleUserAction = (actionType, updateType, update) => {
-    // let watchlist = 0;
-    // let history = 0;
-    // let favorites = 0;
-
-    // console.log('--------------------------------------------------------');
-    // this.#filmsModel.films.forEach((film) => {
-    //   if(film.userDetails.watchlist){
-    //     watchlist+=1;
-    //   }
-    //   if(film.userDetails.alreadyWatched){
-    //     history+=1;
-    //   }
-    //   if(film.userDetails.favorite){
-    //     favorites+=1;
-    //   }
-    // });
-    // console.log(watchlist, history, favorites);
-
     switch (actionType) {
       case UserAction.SWITCH_WATCHLIST:
         this.#filmsModel.updateFilm(updateType, update);
@@ -177,6 +185,7 @@ export default class FilmListPresenter {
 
     remove(this.#sortingComponent);
     this.#currentSortType = sortType;
+    this.#renderedFilmCardsAmount = FILMS_COUNT_PER_STEP;
     this.#clearFilmList();
     this.#renderFilmCardsList(this.films);
   };

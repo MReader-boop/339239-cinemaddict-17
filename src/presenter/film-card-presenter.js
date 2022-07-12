@@ -65,18 +65,18 @@ export default class FilmCardPresenter {
   };
 
   #handleWatchlistButtonClick = () => {
-    this.#film.userDetails.watchlist = !this.#film.userDetails.watchlist;
-    this.#updateData(UserAction.SWITCH_WATCHLIST, UpdateType.MINOR, this.#film);
+    this.#updateData(UserAction.SWITCH_WATCHLIST, UpdateType.MINOR,
+      {...this.#film, userDetails: {...this.#film.userDetails, watchlist: !this.#film.userDetails.watchlist}});
   };
 
   #handleWatchedButtonClick = () => {
-    this.#film.userDetails.alreadyWatched = !this.#film.userDetails.alreadyWatched;
-    this.#updateData(UserAction.SWITCH_WATCHED, UpdateType.MINOR, this.#film);
+    this.#updateData(UserAction.SWITCH_WATCHED, UpdateType.MINOR,
+      {...this.#film, userDetails: {...this.#film.userDetails, alreadyWatched: !this.#film.userDetails.alreadyWatched}});
   };
 
   #handleFavoriteButtonClick = () => {
-    this.#film.userDetails.favorite = !this.#film.userDetails.favorite;
-    this.#updateData(UserAction.SWITCH_FAVORITES, UpdateType.MINOR, this.#film);
+    this.#updateData(UserAction.SWITCH_FAVORITES, UpdateType.MINOR,
+      {...this.#film, userDetails: {...this.#film.userDetails, favorite: !this.#film.userDetails.favorite}});
   };
 
   destroy = () => {
