@@ -1,4 +1,3 @@
-import PopupPresenter from './popup-presenter.js';
 import FilmCardView from '../view/film-card-view.js';
 import {render, remove, replace} from '../framework/render.js';
 import {UserAction, UpdateType} from '../constants/constants.js';
@@ -10,24 +9,22 @@ export default class FilmCardPresenter {
   #updateData = null;
   #film = null;
   #comments = null;
+  #popupPresenter = null;
   #watchlistButton = null;
   #watchedButton = null;
   #favoriteButton = null;
   #closeActivePopup = null;
-  popupPresenter = null;
 
-  constructor(filmContainer, updateData, closeActivePopup) {
+  constructor(popupPresenter, filmContainer, updateData, closeActivePopup, film) {
+    this.#popupPresenter = popupPresenter;
     this.#filmContainer = filmContainer;
     this.#updateData = updateData;
     this.#closeActivePopup = closeActivePopup;
+    this.#film = film;
   }
 
-  init = (film, comments) => {
+  init = () => {
     const prevFilmCardComponent = this.#filmCardComponent;
-
-    this.#film = film;
-    this.#comments = comments;
-
     this.#filmCardComponent = new FilmCardView(this.#film);
 
     this.#watchlistButton = this.#filmCardComponent.element.querySelector('.film-card__controls-item--add-to-watchlist');
@@ -49,7 +46,7 @@ export default class FilmCardPresenter {
     }
 
     if (this.popupPresenter) {
-      this.popupPresenter.init(this.#film, this.#comments);
+      this.popupPresenter.init(this.#film);
     }
 
     remove(prevFilmCardComponent);
@@ -57,26 +54,20 @@ export default class FilmCardPresenter {
 
   #handleFilmCardClick = (evt) => {
     if(!evt.target.classList.contains('film-card__controls-item')) {
-      this.#closeActivePopup();
-      document.querySelector('body').classList.add('hide-overflow');
-      this.popupPresenter = new PopupPresenter(this.#updateData);
-      this.popupPresenter.init(this.#film, this.#comments);
+      this.#popupPresenter.init(this.#film);
     }
   };
 
   #handleWatchlistButtonClick = () => {
-    this.#updateData(UserAction.SWITCH_WATCHLIST, UpdateType.MINOR,
-      {...this.#film, userDetails: {...this.#film.userDetails, watchlist: !this.#film.userDetails.watchlist}});
+    this.#updateData(UserAction.SWITCH_WATCHLIST, UpdateType.MINOR, this.#film);
   };
 
   #handleWatchedButtonClick = () => {
-    this.#updateData(UserAction.SWITCH_WATCHED, UpdateType.MINOR,
-      {...this.#film, userDetails: {...this.#film.userDetails, alreadyWatched: !this.#film.userDetails.alreadyWatched}});
+    this.#updateData(UserAction.SWITCH_WATCHED, UpdateType.MINOR, this.#film);
   };
 
   #handleFavoriteButtonClick = () => {
-    this.#updateData(UserAction.SWITCH_FAVORITES, UpdateType.MINOR,
-      {...this.#film, userDetails: {...this.#film.userDetails, favorite: !this.#film.userDetails.favorite}});
+    this.#updateData(UserAction.SWITCH_FAVORITES, UpdateType.MINOR, this.#film);
   };
 
   destroy = () => {

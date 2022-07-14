@@ -4,6 +4,7 @@ import ShowMoreButtonView from '../view/show-more-button-view.js';
 import SortingView from '../view/sorting-view.js';
 import FilmContainerView from '../view/film-container-view.js';
 import FilmCardPresenter from './film-card-presenter.js';
+import PopupPresenter from './popup-presenter.js';
 import {remove, render} from '../framework/render.js';
 import {sortByRating, sortByDate} from '../utils/film-utils.js';
 import {SortType, UserAction, UpdateType} from '../constants/constants.js';
@@ -17,6 +18,7 @@ export default class FilmListPresenter {
   #filmListComponent = new FilmListView();
   #filmContainer = new FilmContainerView();
   #filmCardPresenters = new Map();
+  #popupPresenter = null;
   #renderedFilmCardsAmount = FILMS_COUNT_PER_STEP;
   #pageMainElement = null;
   #sortingComponent = null;
@@ -31,6 +33,7 @@ export default class FilmListPresenter {
     this.#commentsModel = commentsModel;
     this.#filtersModel = filtersModel;
     this.#pageMainElement = pageMainElement;
+    this.#popupPresenter = new PopupPresenter(this.#handleUserAction, this.#commentsModel, this.#filmsModel);
   }
 
   get films() {
@@ -56,8 +59,8 @@ export default class FilmListPresenter {
   };
 
   #renderFilmCard = (film) => {
-    const filmCardPresenter = new FilmCardPresenter(this.#filmContainer, this.#handleUserAction, this.#closeActivePopup);
-    filmCardPresenter.init(film, this.comments);
+    const filmCardPresenter = new FilmCardPresenter(this.#popupPresenter, this.#filmContainer, this.#handleUserAction, this.#closeActivePopup, film, this.comments);
+    filmCardPresenter.init();
     this.#filmCardPresenters.set(film.info.id, filmCardPresenter);
   };
 
@@ -89,8 +92,7 @@ export default class FilmListPresenter {
     } else {
       remove(this.#filmContainer);
       remove(this.#filmListComponent);
-      this.#noFilmsListComponent = new NoFilmsListView(this.#filtersModel.filter);
-      render(this.#noFilmsListComponent, this.#pageMainElement);
+      this.#displayNoFilmsMessage();
     }
   };
 
@@ -103,8 +105,7 @@ export default class FilmListPresenter {
       remove(this.#filmContainer);
       remove(this.#filmListComponent);
       remove(this.#sortingComponent);
-      this.#noFilmsListComponent = new NoFilmsListView(this.#filtersModel.filter);
-      render(this.#noFilmsListComponent, this.#pageMainElement);
+      this.#displayNoFilmsMessage();
     }
   };
 
@@ -112,6 +113,14 @@ export default class FilmListPresenter {
     this.#filmCardPresenters.forEach((presenter) => presenter.destroy());
     this.#filmCardPresenters.clear();
     remove(this.#showMoreButtonComponent);
+  };
+
+  #displayNoFilmsMessage = () => {
+    if (this.#noFilmsListComponent) {
+      remove(this.#noFilmsListComponent);
+    }
+    this.#noFilmsListComponent = new NoFilmsListView(this.#filtersModel.filter);
+    render(this.#noFilmsListComponent, this.#pageMainElement);
   };
 
   #renderSortControls = () => {
@@ -122,16 +131,13 @@ export default class FilmListPresenter {
   };
 
   #closeActivePopup = () => {
-    for (const filmCardPresenter of this.#filmCardPresenters.values()){
+    for (const [ID, filmCardPresenter] of this.#filmCardPresenters){
       if(filmCardPresenter.popupPresenter){
+        this.#currentPopupID = ID;
         filmCardPresenter.popupPresenter.removePopup();
         return;
       }
     }
-  };
-
-  #updateActivePopup = () => {
-
   };
 
   #onShowMoreButtonClick = () => {
@@ -167,13 +173,13 @@ export default class FilmListPresenter {
   #handleUserAction = (actionType, updateType, update) => {
     switch (actionType) {
       case UserAction.SWITCH_WATCHLIST:
-        this.#filmsModel.updateFilm(updateType, update);
+        this.#filmsModel.updateFilm(updateType, {...update, userDetails: {...update.userDetails, watchlist: !update.userDetails.watchlist}});
         break;
       case UserAction.SWITCH_WATCHED:
-        this.#filmsModel.updateFilm(updateType, update);
+        this.#filmsModel.updateFilm(updateType, {...update, userDetails: {...update.userDetails, alreadyWatched: !update.userDetails.alreadyWatched}});
         break;
       case UserAction.SWITCH_FAVORITES:
-        this.#filmsModel.updateFilm(updateType, update);
+        this.#filmsModel.updateFilm(updateType, {...update, userDetails: {...update.userDetails, favorite: !update.userDetails.favorite}});
         break;
     }
   };
