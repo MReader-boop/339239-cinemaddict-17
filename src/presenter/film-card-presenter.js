@@ -13,13 +13,11 @@ export default class FilmCardPresenter {
   #watchlistButton = null;
   #watchedButton = null;
   #favoriteButton = null;
-  #closeActivePopup = null;
 
-  constructor(popupPresenter, filmContainer, updateData, closeActivePopup, film) {
+  constructor(popupPresenter, filmContainer, updateData, film) {
     this.#popupPresenter = popupPresenter;
     this.#filmContainer = filmContainer;
     this.#updateData = updateData;
-    this.#closeActivePopup = closeActivePopup;
     this.#film = film;
   }
 

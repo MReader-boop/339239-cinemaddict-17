@@ -59,7 +59,7 @@ export default class FilmListPresenter {
   };
 
   #renderFilmCard = (film) => {
-    const filmCardPresenter = new FilmCardPresenter(this.#popupPresenter, this.#filmContainer, this.#handleUserAction, this.#closeActivePopup, film, this.comments);
+    const filmCardPresenter = new FilmCardPresenter(this.#popupPresenter, this.#filmContainer, this.#handleUserAction, film, this.comments);
     filmCardPresenter.init();
     this.#filmCardPresenters.set(film.info.id, filmCardPresenter);
   };
@@ -128,16 +128,6 @@ export default class FilmListPresenter {
     render(this.#sortingComponent, document.querySelector('.main-navigation'), 'afterend');
 
     this.#sortingComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
-  };
-
-  #closeActivePopup = () => {
-    for (const [ID, filmCardPresenter] of this.#filmCardPresenters){
-      if(filmCardPresenter.popupPresenter){
-        this.#currentPopupID = ID;
-        filmCardPresenter.popupPresenter.removePopup();
-        return;
-      }
-    }
   };
 
   #onShowMoreButtonClick = () => {
