@@ -1,4 +1,5 @@
 import {render, remove, replace} from '../framework/render.js';
+import { removeArrayElement } from '../utils/utils.js';
 import {UserAction, UpdateType} from '../constants/constants.js';
 import PopupView from '../view/popup-view.js';
 import CommentsListView from '../view/comments-list-view.js';
@@ -19,18 +20,17 @@ export default class PopupPresenter {
   #filmsModel = null;
   #film = null;
   #comments = null;
-  #updateData = null;
+  #updateFilmData = null;
   #mode = null;
 
-  constructor(updateData, commentsModel, filmsModel) {
-    this.#updateData = updateData;
+  constructor(updateFilmData, commentsModel, filmsModel) {
+    this.#updateFilmData = updateFilmData;
     this.#commentsModel = commentsModel;
     this.#filmsModel = filmsModel;
     this.#commentsModel.addObserver(this.#handleCommentsModelEvent);
   }
 
   init = (film) => {
-
     const prevPopupComponent = this.#popupComponent;
     this.#commentsListContainer = new CommentsListView();
     this.#newCommentComponent = new NewCommentView();
@@ -77,15 +77,15 @@ export default class PopupPresenter {
   };
 
   #handleWatchlistButtonClick = () => {
-    this.#updateData(UserAction.SWITCH_WATCHLIST, UpdateType.MINOR, this.#film);
+    this.#updateFilmData(UserAction.SWITCH_WATCHLIST, UpdateType.MINOR, this.#film);
   };
 
   #handleWatchedButtonClick = () => {
-    this.#updateData(UserAction.SWITCH_WATCHED, UpdateType.MINOR, this.#film);
+    this.#updateFilmData(UserAction.SWITCH_WATCHED, UpdateType.MINOR, this.#film);
   };
 
   #handleFavoriteButtonClick = () => {
-    this.#updateData(UserAction.SWITCH_FAVORITES, UpdateType.MINOR, this.#film);
+    this.#updateFilmData(UserAction.SWITCH_FAVORITES, UpdateType.MINOR, this.#film);
   };
 
   #handleFilmsModelEvent = (_, update) => {
@@ -98,10 +98,19 @@ export default class PopupPresenter {
     this.init(this.#film);
   };
 
+  #handleCommentDeleteButtonClick = (comment) => {
+    const newCommentIDs = removeArrayElement(this.#film.info.commentIDs, comment.id);
+    this.#commentsModel.deleteComment(UpdateType.MINOR, comment);
+    this.#updateFilmData(UserAction.DELETE_COMMENT, UpdateType.PATCH,
+      {...this.#film, info: {...this.#film.info, commentIDs: newCommentIDs}});
+  };
+
   #renderComments = (comments) => {
+    this.#commentComponents.clear();
     comments.forEach((comment) => {
       const commentComponent = new CommentView(comment);
       this.#commentComponents.set(comment.id, commentComponent);
+      commentComponent.setCommentDeleteButtonClick(this.#handleCommentDeleteButtonClick);
       render(commentComponent, this.#commentsListContainer.element);
     });
   };

@@ -41,4 +41,4 @@ const updateItem = (items, update) => {
   ];
 };
 
-export {getRandomInteger, getRandomFloatingPoint, getRandomArrayElement, getRandomArrayElements, updateItem};
+export {removeArrayElement, getRandomInteger, getRandomFloatingPoint, getRandomArrayElement, getRandomArrayElements, updateItem};

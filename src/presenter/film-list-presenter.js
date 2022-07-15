@@ -59,8 +59,8 @@ export default class FilmListPresenter {
   };
 
   #renderFilmCard = (film) => {
-    const filmCardPresenter = new FilmCardPresenter(this.#popupPresenter, this.#filmContainer, this.#handleUserAction, film, this.comments);
-    filmCardPresenter.init();
+    const filmCardPresenter = new FilmCardPresenter(this.#popupPresenter, this.#filmContainer, this.#handleUserAction);
+    filmCardPresenter.init(film);
     this.#filmCardPresenters.set(film.info.id, filmCardPresenter);
   };
 
@@ -143,8 +143,11 @@ export default class FilmListPresenter {
     }
   };
 
-  #handleModelEvent = (updateType) => {
+  #handleModelEvent = (updateType, update) => {
     switch (updateType) {
+      case UpdateType.PATCH:
+        this.#filmCardPresenters.get(update.info.id).init(update);
+        break;
       case UpdateType.MINOR:
         //обновить фильм и попап, если он открыт
         this.#updateFilmList();
@@ -170,6 +173,9 @@ export default class FilmListPresenter {
         break;
       case UserAction.SWITCH_FAVORITES:
         this.#filmsModel.updateFilm(updateType, {...update, userDetails: {...update.userDetails, favorite: !update.userDetails.favorite}});
+        break;
+      case UserAction.DELETE_COMMENT:
+        this.#filmsModel.updateFilm(updateType, update);
         break;
     }
   };

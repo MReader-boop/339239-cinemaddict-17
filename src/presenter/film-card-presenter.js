@@ -14,15 +14,15 @@ export default class FilmCardPresenter {
   #watchedButton = null;
   #favoriteButton = null;
 
-  constructor(popupPresenter, filmContainer, updateData, film) {
+  constructor(popupPresenter, filmContainer, updateData) {
     this.#popupPresenter = popupPresenter;
     this.#filmContainer = filmContainer;
     this.#updateData = updateData;
-    this.#film = film;
   }
 
-  init = () => {
+  init = (film) => {
     const prevFilmCardComponent = this.#filmCardComponent;
+    this.#film = film;
     this.#filmCardComponent = new FilmCardView(this.#film);
 
     this.#watchlistButton = this.#filmCardComponent.element.querySelector('.film-card__controls-item--add-to-watchlist');
