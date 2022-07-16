@@ -7,6 +7,7 @@ import CommentsListView from '../view/comments-list-view.js';
 import CommentView from '../view/comment-view.js';
 import NewCommentView from '../view/new-comment-view.js';
 import dayjs from 'dayjs';
+import he from 'he';
 
 const Mode = {
   OPEN: 'OPEN',
@@ -114,7 +115,7 @@ export default class PopupPresenter {
     this.#maxCommentID+=1;
     const newComment = {
       id: this.#maxCommentID,
-      text: localComment.comment,
+      text: he.escape(localComment.comment),
       emoji: localComment.emotion,
       author: 'Movie Buff',
       date: dayjs()
