@@ -35,4 +35,28 @@ const sortByRating = (filmA, filmB) => {
   return 0;
 };
 
-export {sortByRating, sortByDate};
+const compareCommentByDate = (commentA, commentB) => {
+  if (commentA.date.diff(commentB.date) > 0) {
+    return commentA.date;
+  }
+
+  if (commentA.date.diff(commentB.date) < 0) {
+    return commentB.date;
+  }
+
+  return null;
+};
+
+const sortCommentByDate = (commentA, commentB) => {
+  if (compareCommentByDate(commentA, commentB) === commentB.date) {
+    return -1;
+  }
+
+  if (compareCommentByDate(commentA, commentB) === commentB.date) {
+    return 1;
+  }
+
+  return 0;
+};
+
+export {sortByRating, sortByDate, sortCommentByDate};

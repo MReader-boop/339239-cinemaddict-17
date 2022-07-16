@@ -29,13 +29,13 @@ export default class CommentView extends AbstractView {
     return createCommentTemplate(this.#comment);
   }
 
-  setCommentDeleteButtonClick = (callback) => {
+  setCommentDeleteButtonClickHandler = (callback) => {
     this._callback = callback;
 
-    this.element.querySelector('.film-details__comment-delete').addEventListener('click', this.#handleCommentDeleteButtonClick);
+    this.element.querySelector('.film-details__comment-delete').addEventListener('click', this.#commentDeleteButtonClickHandler);
   };
 
-  #handleCommentDeleteButtonClick = (evt) => {
+  #commentDeleteButtonClickHandler = (evt) => {
     evt.preventDefault();
     this._callback(this.#comment);
   };

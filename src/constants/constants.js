@@ -25,6 +25,7 @@ const UserAction = {
   SWITCH_FAVORITES: 'SWITCH_FAVORITES',
   CHANGE_FILTER: 'CHANGE_FILTER',
   DELETE_COMMENT: 'DELETE_COMMENT',
+  ADD_COMMENT: 'ADD_COMMENT'
 };
 
 export {UserAction, UpdateType, FilterType, SortType, EMOJIS};

@@ -177,6 +177,9 @@ export default class FilmListPresenter {
       case UserAction.DELETE_COMMENT:
         this.#filmsModel.updateFilm(updateType, update);
         break;
+      case UserAction.ADD_COMMENT:
+        this.#filmsModel.updateFilm(updateType, update);
+        break;
     }
   };
 

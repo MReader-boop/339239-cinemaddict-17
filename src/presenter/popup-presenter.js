@@ -1,10 +1,12 @@
 import {render, remove, replace} from '../framework/render.js';
 import { removeArrayElement } from '../utils/utils.js';
 import {UserAction, UpdateType} from '../constants/constants.js';
+import { sortCommentByDate } from '../utils/film-utils.js';
 import PopupView from '../view/popup-view.js';
 import CommentsListView from '../view/comments-list-view.js';
 import CommentView from '../view/comment-view.js';
 import NewCommentView from '../view/new-comment-view.js';
+import dayjs from 'dayjs';
 
 const Mode = {
   OPEN: 'OPEN',
@@ -12,6 +14,7 @@ const Mode = {
 };
 
 export default class PopupPresenter {
+  #maxCommentID = 400;
   #commentsListContainer = null;
   #newCommentComponent = null;
   #popupComponent = null;
@@ -35,7 +38,7 @@ export default class PopupPresenter {
     this.#commentsListContainer = new CommentsListView();
     this.#newCommentComponent = new NewCommentView();
     this.#film = film;
-    this.#comments = this.#filterComments(this.#film, this.#commentsModel.comments);
+    this.#comments = this.#setComments(this.#film, this.#commentsModel.comments);
     this.#popupComponent = new PopupView(this.#film, this.#comments);
     this.#mode = Mode.OPEN;
 
@@ -51,6 +54,8 @@ export default class PopupPresenter {
     this.#popupComponent.setWatchlistButtonHandler(this.#handleWatchlistButtonClick);
     this.#popupComponent.setWatchedButtonHandler(this.#handleWatchedButtonClick);
     this.#popupComponent.setFavoriteButtonHandler(this.#handleFavoriteButtonClick);
+    this.#newCommentComponent.setEnterKeydownHandler(this.#handleEnterKeydown);
+
     this.#filmsModel.addObserver(this.#handleFilmsModelEvent);
 
     if(prevPopupComponent === null){
@@ -100,9 +105,26 @@ export default class PopupPresenter {
 
   #handleCommentDeleteButtonClick = (comment) => {
     const newCommentIDs = removeArrayElement(this.#film.info.commentIDs, comment.id);
-    this.#commentsModel.deleteComment(UpdateType.MINOR, comment);
+    this.#commentsModel.deleteComment(UpdateType.PATCH, comment);
     this.#updateFilmData(UserAction.DELETE_COMMENT, UpdateType.PATCH,
       {...this.#film, info: {...this.#film.info, commentIDs: newCommentIDs}});
+  };
+
+  #handleEnterKeydown = (localComment) => {
+    this.#maxCommentID+=1;
+    const newComment = {
+      id: this.#maxCommentID,
+      text: localComment.comment,
+      emoji: localComment.emotion,
+      author: 'Movie Buff',
+      date: dayjs()
+    };
+    const newCommentIDs = this.#film.info.commentIDs.slice();
+    newCommentIDs.push(newComment.id);
+    this.#commentsModel.addComment(UpdateType.PATCH, newComment);
+    this.#updateFilmData(UserAction.ADD_COMMENT, UpdateType.PATCH,
+      {...this.#film, info: {...this.#film.info, commentIDs: newCommentIDs}});
+
   };
 
   #renderComments = (comments) => {
@@ -110,12 +132,12 @@ export default class PopupPresenter {
     comments.forEach((comment) => {
       const commentComponent = new CommentView(comment);
       this.#commentComponents.set(comment.id, commentComponent);
-      commentComponent.setCommentDeleteButtonClick(this.#handleCommentDeleteButtonClick);
+      commentComponent.setCommentDeleteButtonClickHandler(this.#handleCommentDeleteButtonClick);
       render(commentComponent, this.#commentsListContainer.element);
     });
   };
 
-  #filterComments = (film, comments) => comments.filter((comment) => film.info.commentIDs.includes(comment.id));
+  #setComments = (film, comments) => comments.filter((comment) => film.info.commentIDs.includes(comment.id)).sort(sortCommentByDate);
 
   removePopup() {
     if(this.#mode === Mode.OPEN){
