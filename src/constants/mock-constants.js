@@ -1,7 +1,5 @@
 const AGE_RATINGS = [0, 6, 12, 18];
 
-const EMOJIS = ['smile', 'sleeping', 'puke', 'angry'];
-
 const FILM_NAMES = [
   'Made for Each Other',
   'Popeye Meets Sinbad',
@@ -73,4 +71,4 @@ const COMMENT_AUTHORS = [
   'John Doe'
 ];
 
-export {AGE_RATINGS, EMOJIS, FILM_NAMES, POSTERS, SAMPLE_SENTENCES, GENRES, DIRECTORS, WRITERS, ACTORS, COUNTRIES, COMMENT_AUTHORS};
+export {AGE_RATINGS, FILM_NAMES, POSTERS, SAMPLE_SENTENCES, GENRES, DIRECTORS, WRITERS, ACTORS, COUNTRIES, COMMENT_AUTHORS};

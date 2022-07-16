@@ -1,11 +1,11 @@
-import {getRandomInteger, getRandomFloatingPoint, getRandomArrayElement, getRandomArrayElements} from '../utils.js';
-import {AGE_RATINGS, FILM_NAMES, POSTERS, SAMPLE_SENTENCES, GENRES, DIRECTORS, WRITERS, ACTORS, COUNTRIES} from '../constants.js';
+import {getRandomInteger, getRandomFloatingPoint, getRandomArrayElement, getRandomArrayElements} from '../utils/utils.js';
+import {AGE_RATINGS, FILM_NAMES, POSTERS, SAMPLE_SENTENCES, GENRES, DIRECTORS, WRITERS, ACTORS, COUNTRIES} from '../constants/mock-constants.js';
 import dayjs from 'dayjs';
 
 export const generateFilm = (_, filmID) => ({
   info: {
     id: filmID,
-    commentIDs: Array.from(new Set(Array.from({length: getRandomInteger(0, 200)}, () => getRandomInteger(0, 400)))),
+    commentIDs: Array.from(new Set(Array.from({length: getRandomInteger(0, 50)}, () => getRandomInteger(0, 400)))),
     title: getRandomArrayElement(FILM_NAMES),
     alternativeTitle: getRandomArrayElement(SAMPLE_SENTENCES),
     totalRating: getRandomFloatingPoint(1, 10),
@@ -15,7 +15,7 @@ export const generateFilm = (_, filmID) => ({
     writers: getRandomArrayElements(WRITERS, getRandomInteger(1, WRITERS.length)),
     actors: getRandomArrayElements(ACTORS, getRandomInteger(1, ACTORS.length)),
     release: {
-      date: dayjs().year(getRandomInteger(1930, 2000)).month(getRandomInteger(0, 11)).date(getRandomInteger(1, 31)).format(),
+      date: dayjs().year(getRandomInteger(1930, 2000)).month(getRandomInteger(0, 11)).date(getRandomInteger(1, 31)),
       country: getRandomArrayElement(COUNTRIES)
     },
     runtime: getRandomInteger(70, 190),
@@ -26,6 +26,6 @@ export const generateFilm = (_, filmID) => ({
     watchlist: Boolean(getRandomInteger(0, 1)),
     alreadyWatched: Boolean(getRandomInteger(0, 1)),
     watchingDate: dayjs().format(),
-    favorite: getRandomInteger(0, 1),
+    favorite: Boolean(getRandomInteger(0, 1)),
   }
 });

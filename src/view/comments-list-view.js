@@ -1,13 +1,11 @@
 import AbstractView from '../framework/view/abstract-view.js';
 
 const createFilmListTemplate = () =>
-  `<section class="films">
-    <section class="films-list">
+  `<ul class="film-details__comments-list">
 
-    </section>
-  </section>`;
+  </ul>`;
 
-export default class FilmListView extends AbstractView {
+export default class CommentsListView extends AbstractView {
   get template() {
     return createFilmListTemplate();
   }

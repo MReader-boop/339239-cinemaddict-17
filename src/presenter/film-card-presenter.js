@@ -1,6 +1,6 @@
-import PopupPresenter from './popup-presenter.js';
 import FilmCardView from '../view/film-card-view.js';
 import {render, remove, replace} from '../framework/render.js';
+import {UserAction, UpdateType} from '../constants/constants.js';
 
 export default class FilmCardPresenter {
 
@@ -9,25 +9,21 @@ export default class FilmCardPresenter {
   #updateData = null;
   #film = null;
   #comments = null;
+  #popupPresenter = null;
   #watchlistButton = null;
   #watchedButton = null;
   #favoriteButton = null;
-  #closeActivePopup = null;
-  popupPresenter = null;
 
-  constructor(filmContainer, updateData, closeActivePopup) {
+  constructor(popupPresenter, filmContainer, updateData) {
+    this.#popupPresenter = popupPresenter;
     this.#filmContainer = filmContainer;
     this.#updateData = updateData;
-    this.#closeActivePopup = closeActivePopup;
   }
 
-  init = (film, comments) => {
+  init = (film) => {
     const prevFilmCardComponent = this.#filmCardComponent;
-
     this.#film = film;
-    this.#comments = comments;
-
-    this.#filmCardComponent = new FilmCardView(film);
+    this.#filmCardComponent = new FilmCardView(this.#film);
 
     this.#watchlistButton = this.#filmCardComponent.element.querySelector('.film-card__controls-item--add-to-watchlist');
     this.#watchedButton = this.#filmCardComponent.element.querySelector('.film-card__controls-item--mark-as-watched');
@@ -35,8 +31,8 @@ export default class FilmCardPresenter {
 
     this.#filmCardComponent.setClickHandler(this.#handleFilmCardClick);
     this.#filmCardComponent.setWatchlistButtonHandler(this.#handleWatchlistButtonClick);
-    this.#filmCardComponent.setWatchedButtonHandler(this.#handlewatchedButtonClick);
-    this.#filmCardComponent.setFavoriteButtonHandler(this.#handlefavoriteButtonClick);
+    this.#filmCardComponent.setWatchedButtonHandler(this.#handleWatchedButtonClick);
+    this.#filmCardComponent.setFavoriteButtonHandler(this.#handleFavoriteButtonClick);
 
     if(prevFilmCardComponent === null){
       render(this.#filmCardComponent, this.#filmContainer.element);
@@ -48,7 +44,7 @@ export default class FilmCardPresenter {
     }
 
     if (this.popupPresenter) {
-      this.popupPresenter.init(this.#film, this.#comments);
+      this.popupPresenter.init(this.#film);
     }
 
     remove(prevFilmCardComponent);
@@ -56,47 +52,23 @@ export default class FilmCardPresenter {
 
   #handleFilmCardClick = (evt) => {
     if(!evt.target.classList.contains('film-card__controls-item')) {
-      this.#closeActivePopup();
-      document.querySelector('body').classList.add('hide-overflow');
-      this.popupPresenter = new PopupPresenter(this.#updateData);
-      this.popupPresenter.init(this.#film, this.#comments);
+      this.#popupPresenter.init(this.#film);
     }
   };
 
   #handleWatchlistButtonClick = () => {
-    if(this.#watchlistButton.classList.contains('film-card__controls-item--active')){
-      this.#watchlistButton.classList.remove('film-card__controls-item--active');
-    } else {
-      this.#watchlistButton.classList.add('film-card__controls-item--active');
-    }
-
-    this.#film.userDetails.watchlist = !this.#film.userDetails.watchlist;
-    this.#updateData(this.#film);
+    this.#updateData(UserAction.SWITCH_WATCHLIST, UpdateType.MINOR, this.#film);
   };
 
-  #handlewatchedButtonClick = () => {
-    if(this.#watchedButton.classList.contains('film-card__controls-item--active')){
-      this.#watchedButton.classList.remove('film-card__controls-item--active');
-    } else {
-      this.#watchedButton.classList.add('film-card__controls-item--active');
-    }
-
-    this.#film.userDetails.alreadyWatched = !this.#film.userDetails.alreadyWatched;
-    this.#updateData(this.#film);
+  #handleWatchedButtonClick = () => {
+    this.#updateData(UserAction.SWITCH_WATCHED, UpdateType.MINOR, this.#film);
   };
 
-  #handlefavoriteButtonClick = () => {
-    if(this.#favoriteButton.classList.contains('film-card__controls-item--active')){
-      this.#favoriteButton.classList.remove('film-card__controls-item--active');
-    } else {
-      this.#favoriteButton.classList.add('film-card__controls-item--active');
-    }
-
-    this.#film.userDetails.favorite = !this.#film.userDetails.favorite;
-    this.#updateData(this.#film);
+  #handleFavoriteButtonClick = () => {
+    this.#updateData(UserAction.SWITCH_FAVORITES, UpdateType.MINOR, this.#film);
   };
 
   destroy = () => {
-    remove(this.filmCardComponent);
+    remove(this.#filmCardComponent);
   };
 }
